@@ -38,6 +38,7 @@ class MdnsDiscoveryController extends GetxController {
   RxBool ready = false.obs;
   bool searching = false;
   void findServices({String name = "iot-orchestrator"}) async {
+    found.value = <OrchestratorInstance>[].obs;
     searching = true;
     await for (final PtrResourceRecord ptr in client.lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer("_$name._tcp.local"))) {
       // Use the domainName from the PTR record to get the SRV record,
