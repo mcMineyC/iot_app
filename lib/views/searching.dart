@@ -15,6 +15,7 @@ class SearchingView extends StatelessWidget {
       controller.findServices();
 
     return Scaffold(
+      
       body: Container(
         color: colors.surface,
         padding: const EdgeInsets.all(8.0),
@@ -26,51 +27,62 @@ class SearchingView extends StatelessWidget {
                 // List instanceWidgets = controller.found.value.map((i) => Text(
                 //   "${i.ip}:${i.port} - (${i.name})"
                 // )).toList(),
-                return ListView.builder(
-                  itemCount: instances.length,
-                  itemBuilder: (_, int index) =>
-                    GestureDetector(
-                      onTap: () {
-                        var orchestrator = Get.find<OrchestratorController>();
-                        orchestrator.connect(
-                          "${instances[index].ip}:${instances[index].port}"
-                        );
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: colors.primaryContainer,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              children: [
-                                Text(
-                                  instances[index].name,
-                                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold, color: colors.onPrimaryContainer),
-                                ),
-                                Text(
-                                  "${instances[index].ip}:${instances[index].port}",
-                                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: colors.onPrimaryContainer),
-                                ),
-                              ]
-                            ),
-                            Icon(Icons.chevron_right_rounded, size: 32, color: colors.onPrimaryContainer),
-                            // IconButton(
-                            //   onPressed: () {
-                            //     var orchestrator = Get.find<OrchestratorController>();
-                            //     orchestrator.connect(
-                            //       "${instances[index].ip}:${instances[index].port}"
-                            //     );
-                            //   },
-                            //   icon: Icon(Icons.chevron_right_rounded),
-                            // ),
-                          ],
-                        ),
-                      ),
+                return Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0,0,0,12),
+                      child: Text("Select an instance", style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold, color: colors.onPrimaryContainer)),
                     ),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: instances.length,
+                        itemBuilder: (_, int index) =>
+                          GestureDetector(
+                            onTap: () {
+                              var orchestrator = Get.find<OrchestratorController>();
+                              orchestrator.connect(
+                                "${instances[index].ip}:${instances[index].port}"
+                              );
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                color: colors.primaryContainer,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    children: [
+                                      Text(
+                                        instances[index].name,
+                                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold, color: colors.onPrimaryContainer),
+                                      ),
+                                      Text(
+                                        "${instances[index].ip}:${instances[index].port}",
+                                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: colors.onPrimaryContainer),
+                                      ),
+                                    ]
+                                  ),
+                                  Icon(Icons.chevron_right_rounded, size: 32, color: colors.onPrimaryContainer),
+                                  // IconButton(
+                                  //   onPressed: () {
+                                  //     var orchestrator = Get.find<OrchestratorController>();
+                                  //     orchestrator.connect(
+                                  //       "${instances[index].ip}:${instances[index].port}"
+                                  //     );
+                                  //   },
+                                  //   icon: Icon(Icons.chevron_right_rounded),
+                                  // ),
+                                ],
+                              ),
+                            ),
+                          ),
+                      )
+                    ),
+                  ],
                 );
                 // Future.delayed(Duration(milliseconds: 500), () {
                 //   var orchestrator = Get.find<OrchestratorController>();
