@@ -1,12 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:iot_app/controllers/orchestrator.dart';
 import "package:shared_preferences/shared_preferences.dart";
-import "controllers/preferences.dart";
 
-void main() {
+import "controllers/preferences.dart";
+import 'controllers/mdns.dart';
+import 'controllers/orchestrator.dart';
+
+import "views/searching.dart";
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Get.put(PreferencesController());
+  final sp = await SharedPreferences.getInstance();
+  Get.put(sp);
+
+  var prefsController = PreferencesController();
+  await prefsController.restoreFromSp();
+  Get.put(prefsController);
+
+  var mdnsController = MdnsDiscoveryController();
+  await mdnsController.init();
+  Get.put(mdnsController);
   Get.put(OrchestratorController());
   runApp(const MyApp());
 }
@@ -20,14 +33,14 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue, brightness: Brightness.dark),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       debugShowCheckedModeBanner: false,
       enableLog: true,
       defaultTransition: Transition.fadeIn,
       transitionDuration: Duration(milliseconds: 300),
-      home: MyHomePage(),
+      home: SearchingView(),
     );
   }
 }
@@ -52,7 +65,7 @@ class MyHomePage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
-          controller.connect();
+          controller.connect("localhost:1883");
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),

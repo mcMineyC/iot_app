@@ -5,7 +5,7 @@ import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
 class OrchestratorController extends GetxController {
-  final client = MqttServerClient('localhost', 'iot_app_flutter');
+  final client = MqttServerClient('', 'iot_app_flutter');
   var connected = false.obs;
   var connectionState = "disconnected".obs;
   var connectionError = "".obs;
@@ -13,6 +13,8 @@ class OrchestratorController extends GetxController {
   void onInit() {
     super.onInit();
     print("Initializing OrchestratorController");
+
+    
 
     // Listen to connection state changes and update accordingly
     connectionState.listen((state) {
@@ -47,13 +49,16 @@ class OrchestratorController extends GetxController {
       .withWillQos(MqttQos.atLeastOnce);
     client.connectionMessage = connMess;
     // And finally, connect!
-    connect().then((_) {
-      print('MQTT client connection process completed');
-      client.updates!.listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
-        handleClientUpdates(c);
-      });
-      client.subscribe('/#', MqttQos.atMostOnce);
-    });
+    // Moved to line 54, 90
+  }
+
+  Future<bool> connect(String connectionString) async {
+    String ip = connectionString.split(":")[0];
+    int port = int.parse(connectionString.split(":")[1]);
+    client.server = ip;
+    client.port = port;
+    await _connect();
+    return connectionState.value == "connected";
   }
 
   void handleClientUpdates(List<MqttReceivedMessage<MqttMessage?>>? c) {
@@ -70,7 +75,7 @@ class OrchestratorController extends GetxController {
   }
 
   // Connection logic with retry mechanism
-  Future<void> connect({int maxRetries = 3, Duration retryDelay = const Duration(seconds: 2)}) async {
+  Future<void> _connect({int maxRetries = 3, Duration retryDelay = const Duration(seconds: 2)}) async {
     if(connectionState.value == "connected"){
       client.disconnect();
       connectionState.value = "disconnected";
@@ -85,6 +90,14 @@ class OrchestratorController extends GetxController {
         if (client.connectionStatus?.state == MqttConnectionState.connected) {
           print('MQTT client connected');
           connectionState.value = "connected";
+          
+          // Set up subscriptions and such
+          print('MQTT client connection process completed');
+          client.updates!.listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
+            handleClientUpdates(c);
+          });
+          client.subscribe('/#', MqttQos.atMostOnce);
+
           return;
         } else {
           print('ERROR MQTT client connection failed - status is ${client.connectionStatus}');

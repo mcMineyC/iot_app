@@ -36,6 +36,7 @@ dependencies:
   json_annotation: ^4.9.0
   mqtt_client: ^10.11.1
   mqtt_helper: ^1.0.2
+  multicast_dns: ^0.3.3
   pretty_dio_logger: ^1.4.0
   shared_preferences: ^2.5.3
 
