@@ -1,20 +1,26 @@
+import 'dart:convert';
+
 import "package:get/get.dart";
+import 'package:iot_app/models/orchestrator_integration_status.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
+
+import '../utils/route_matching.dart';
 
 class OrchestratorController extends GetxController {
   final client = MqttServerClient('', 'iot_app_flutter');
   var connected = false.obs;
   var connectionState = "waiting".obs;
   var connectionError = "".obs;
+
+  var integrationStatus = <IntegrationStatus>[].obs;
+
   @override
   void onInit() {
     super.onInit();
     print("Initializing OrchestratorController");
-
-    
 
     // Listen to connection state changes and update accordingly
     connectionState.listen((state) {
@@ -42,6 +48,7 @@ class OrchestratorController extends GetxController {
     client.onDisconnected = () {
       print('MQTT client disconnected');
       connectionState.value = "disconnected";
+      _connect();
     };
     final connMess = MqttConnectMessage()
       .withClientIdentifier('iot_app_flutter')
@@ -52,6 +59,15 @@ class OrchestratorController extends GetxController {
     client.connectionMessage = connMess;
     // And finally, connect!
     // Moved to line 54, 90
+  }
+
+  Future<void> onConnect() async {
+    client.updates!.listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
+      handleClientUpdates(c);
+    });
+    client.subscribe('/#', MqttQos.atMostOnce);
+    sendMessage("/orchestrator/getdata/status", "");
+    sendMessage("/orchestrator/getdata/state", "");
   }
 
   Future<bool> connect(String connectionString) async {
@@ -68,12 +84,28 @@ class OrchestratorController extends GetxController {
     final pt = MqttPublishPayload.bytesToStringAsString(
       recMess.payload.message,
     );
-    print('::MESSAGE:: topic is <${c[0].topic}>, payload is <-- $pt -->');
+    // print('::MESSAGE:: topic is <${c[0].topic}>, payload is <-- $pt -->');
+    handleMessage(c[0].topic, pt);
+  }
+
+  void sendMessage(String topic, String message) {
+    final builder = MqttClientPayloadBuilder();
+    builder.addString(message);
+    client.publishMessage(topic, MqttQos.atMostOnce, builder.payload!);
   }
 
   void handleMessage(String topic, String payload) {
-    print('Received message on topic: $topic with payload: $payload');
-    // Here you can add logic to handle different topics and payloads
+    // print('Received message on topic: $topic with payload: $payload');
+    if(topic == "/orchestrator/status"){
+      Map<String, dynamic> map = jsonDecode(payload);
+      List<IntegrationStatus> statuses = [];
+      map.forEach((key, value) {
+        value["id"] = key;
+        statuses.add(IntegrationStatus.fromJson(value as Map<String, dynamic>));
+      });
+      integrationStatus.value = statuses;
+      return;
+    }
   }
 
   // Connection logic with retry mechanism
@@ -96,11 +128,7 @@ class OrchestratorController extends GetxController {
           
           // Set up subscriptions and such
           print('MQTT client connection process completed');
-          client.updates!.listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
-            handleClientUpdates(c);
-          });
-          client.subscribe('/#', MqttQos.atMostOnce);
-
+          await onConnect();
           return;
         } else {
           print('ERROR MQTT client connection failed - status is ${client.connectionStatus}');
@@ -129,69 +157,4 @@ class OrchestratorController extends GetxController {
       }
     }
   }
-}
-
-typedef RouteHandler = dynamic Function(Map<String, String> params);
-
-Map<String, RouteHandler> _routes = {};
-
-void registerRoute(String pattern, RouteHandler handler) {
-  // Precompile pattern into regex for faster matching
-  final parts = pattern.split('/');
-  final regexPattern = parts.map((part) {
-    if (part.startsWith(':')) {
-      return '([^\\/]+)';
-    }
-    return part;
-  }).join('\\/');
-  
-  final regex = RegExp('^/$regexPattern\$');
-  _routes[pattern] = (params) => handler(params);
-}
-
-dynamic matchRoute(String path, {bool caseSensitive = false}) {
-  // Normalize path: remove leading/trailing slashes and ensure single leading slash for matching
-  final normalizedPath = path.replaceAll(RegExp(r'^/+|/+$'), '');
-  final requestPath = '/$normalizedPath';
-  
-  for (var entry in _routes.entries) {
-    final pattern = entry.key;
-    final handler = entry.value;
-    
-    // Quick string comparison first (normalize the pattern similarly)
-    final normalizedPattern = pattern.replaceAll(RegExp(r'^/+|/+$'), '');
-    if (!caseSensitive && !pattern.contains(':') && normalizedPattern == normalizedPath) {
-      return handler(<String, String>{});
-    }
-        
-    try {
-      // Build regex from pattern, escaping static parts and converting :param to capture groups
-      final patternParts = normalizedPattern.split('/');
-      final regexPattern = patternParts.map((part) {
-        if (part.startsWith(':')) {
-          return '([^/]+)';
-        }
-        return RegExp.escape(part);
-      }).join('/');
-      
-      final regex = RegExp('^/$regexPattern\$');
-      final match = regex.firstMatch(requestPath);
-      if (match == null) continue;
-      
-      // Extract parameters
-      final params = <String, String>{};
-      for (var i = 0; i < patternParts.length; i++) {
-        final part = patternParts[i];
-        if (part.startsWith(':')) {
-          params[part.substring(1)] = match.group(i + 1)!;
-        }
-      }
-      
-      return handler(params);
-    } catch (_) {
-      continue;
-    }
-  }
-  
-  throw Exception('Route not found');
 }
