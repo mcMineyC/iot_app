@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../controllers/mdns.dart';
-import '../controllers/orchestrator.dart';
+import 'package:iot_app/views/initialization/connecting.dart';
+import '../../controllers/mdns.dart';
+import '../../controllers/orchestrator.dart';
 
 class SearchingView extends StatelessWidget {
   final controller = Get.find<MdnsDiscoveryController>();
@@ -15,7 +16,6 @@ class SearchingView extends StatelessWidget {
       controller.findServices();
 
     return Scaffold(
-      
       body: Container(
         color: colors.surface,
         padding: const EdgeInsets.all(8.0),
@@ -40,10 +40,9 @@ class SearchingView extends StatelessWidget {
                         itemBuilder: (_, int index) =>
                           GestureDetector(
                             onTap: () {
-                              var orchestrator = Get.find<OrchestratorController>();
-                              orchestrator.connect(
-                                "${instances[index].ip}:${instances[index].port}"
-                              );
+                              Get.to(ConnectingView(
+                                connectionString: instances[index].connectionString,
+                              ));
                             },
                             child: Container(
                               padding: EdgeInsets.all(12),
@@ -61,7 +60,7 @@ class SearchingView extends StatelessWidget {
                                         style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold, color: colors.onPrimaryContainer),
                                       ),
                                       Text(
-                                        "${instances[index].ip}:${instances[index].port}",
+                                        instances[index].connectionString,
                                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: colors.onPrimaryContainer),
                                       ),
                                     ]

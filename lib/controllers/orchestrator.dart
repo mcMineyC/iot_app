@@ -7,7 +7,7 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 class OrchestratorController extends GetxController {
   final client = MqttServerClient('', 'iot_app_flutter');
   var connected = false.obs;
-  var connectionState = "disconnected".obs;
+  var connectionState = "waiting".obs;
   var connectionError = "".obs;
   @override
   void onInit() {
@@ -22,6 +22,8 @@ class OrchestratorController extends GetxController {
       if (state == "connected") {
         connected.value = true;
       } else if (state == "disconnected") {
+        connected.value = false;
+      } else if (state == "waiting") {
         connected.value = false;
       } else if (state == "error") {
         connected.value = false;

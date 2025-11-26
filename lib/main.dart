@@ -6,7 +6,7 @@ import "controllers/preferences.dart";
 import 'controllers/mdns.dart';
 import 'controllers/orchestrator.dart';
 
-import "views/searching.dart";
+import "views/initialization/searching.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

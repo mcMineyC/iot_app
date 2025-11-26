@@ -89,4 +89,7 @@ class OrchestratorInstance {
     this.port = port;
     this.name = name;
   }
+  String get connectionString {
+    return "${this.ip}:${this.port}";
+  }
 }
