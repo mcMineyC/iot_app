@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:iot_app/views/initialization/starting.dart';
 import "package:shared_preferences/shared_preferences.dart";
 
 import "controllers/preferences.dart";
@@ -12,6 +13,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final sp = await SharedPreferences.getInstance();
   Get.put(sp);
+
+  if(sp.containsKey("cachedConnectionString")){
+    print("Found cached connection string: \"${sp.getString("cachedConnectionString")}\"!!!");
+  }
 
   var prefsController = PreferencesController();
   await prefsController.restoreFromSp();
@@ -41,7 +46,7 @@ class MyApp extends StatelessWidget {
       enableLog: true,
       defaultTransition: Transition.fadeIn,
       transitionDuration: Duration(milliseconds: 300),
-      home: SearchingView(),
+      home: StartingView(),
     );
   }
 }

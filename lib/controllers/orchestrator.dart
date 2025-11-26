@@ -87,6 +87,7 @@ class OrchestratorController extends GetxController {
       attempt++;
       try {
         print('MQTT client connecting.... (attempt $attempt/$maxRetries)');
+        connectionState.value = "connecting";
         await client.connect();
 
         if (client.connectionStatus?.state == MqttConnectionState.connected) {
@@ -107,15 +108,16 @@ class OrchestratorController extends GetxController {
         }
       } on NoConnectionException catch (e) {
         print('MQTT client exception - $e');
-        connectionState.value = "error";
         client.disconnect();
+        connectionState.value = "error";
       } on SocketException catch (e) {
         print('MQTT socket exception - $e');
-        connectionState.value = "error";
         client.disconnect();
+        connectionState.value = "error";
       } catch (e) {
         print('Unexpected exception - $e');
         client.disconnect();
+        connectionState.value = "error";
       }
 
       if (attempt < maxRetries) {

@@ -5,14 +5,18 @@ class PreferencesController extends GetxController {
   final SharedPreferences sp = Get.find<SharedPreferences>();
   var ready = false.obs;
 
-  String cachedConnectionString = "";
+  RxString cachedConnectionString = "".obs;
   Future restoreFromSp() async {
-    if(sp.containsKey("cachedConnectionString")) cachedConnectionString = (await sp.getString("")) ?? "";
-    
+    cachedConnectionString.value = await restoreKey("cachedConnectionString");
     ready.value = true;
+  }
+  Future<String> restoreKey(String key) async {
+    if(sp.containsKey(key)) return (await sp.getString(key)) ?? "";
+    return "";
   }
   @override
   void onInit() {
     super.onInit();
+    ever(cachedConnectionString, (_) => sp.setString("cachedConnectionString", cachedConnectionString.value));
   }
 }
