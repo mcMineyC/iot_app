@@ -7,6 +7,8 @@ import 'dart:io';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
+import '../models/integrationconfig.dart';
+import '../models/integrationschema.dart';
 import '../utils/route_matching.dart';
 
 class OrchestratorController extends GetxController {
@@ -17,6 +19,8 @@ class OrchestratorController extends GetxController {
 
   var integrationStatus = <IntegrationStatus>[].obs;
   Map<String, RxMap<String, dynamic>> orchestratorState = <String, RxMap<String, dynamic>>{};
+  RxMap<String, List<IntegrationSchema>> integrationSchemas = <String, List<IntegrationSchema>>{}.obs;
+  RxMap<String, IntegrationConfig> enabledIntegrations = <String, IntegrationConfig>{}.obs;
 
   @override
   void onInit() {
@@ -67,8 +71,8 @@ class OrchestratorController extends GetxController {
       handleClientUpdates(c);
     });
     client.subscribe('/#', MqttQos.atMostOnce);
-    sendMessage("/orchestrator/getdata/status", "");
-    sendMessage("/orchestrator/getdata/state", "");
+    sendMessage("/orchestrator/getdata/fullState", "");
+    sendMessage("/orchestrator/getdata/enabledIntegrations", "");
   }
 
   Future<bool> connect(String connectionString) async {
@@ -126,6 +130,26 @@ class OrchestratorController extends GetxController {
         orchestratorState[key] = RxMap<String, dynamic>.from(value as Map<String, dynamic>);
       });
       return;
+    }else if(topic == "/orchestrator/schemas"){
+      Map<String, List<IntegrationSchema>> schemas = {};
+      Map<String, dynamic> map = jsonDecode(payload);
+      map.forEach((key, value) {
+        List<IntegrationSchema> schemaList = [];
+        for(var item in value as List){
+          schemaList.add(IntegrationSchema.fromJson(item as Map<String, dynamic>));
+        }
+        schemas[key] = schemaList;
+      });
+      print("Received integration schemas for keys: ${schemas}");
+      integrationSchemas.value = schemas;
+    }else if(topic == "/orchestrator/enabledIntegrations"){
+      Map<String, dynamic> map = jsonDecode(payload);
+      Map<String, IntegrationConfig> enabledIntegrations = {};
+      map.forEach((key, value) {
+        enabledIntegrations[key] = IntegrationConfig.fromJson(value as Map<String, dynamic?>);
+      });
+      this.enabledIntegrations.value = enabledIntegrations;
+      // print("Enabled integrations: $enabledIntegrations");
     }
   }
 

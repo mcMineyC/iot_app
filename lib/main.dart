@@ -10,7 +10,7 @@ import 'controllers/orchestrator.dart';
 import 'views/homeScreen.dart';
 import "views/initialization/searching.dart";
 import 'views/scaffold.dart';
-import 'views/settings/instanceList.dart';
+import 'views/settings/integrationList.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,8 +58,8 @@ class MyApp extends StatelessWidget {
           page: () => ScaffoldWidget(child: Homescreen()),
         ),
         GetPage(
-          name: '/instanceList',
-          page: () => ScaffoldWidget(child: InstanceList()),
+          name: '/integrationList',
+          page: () => ScaffoldWidget(child: IntegrationList()),
         )
       ],
     );

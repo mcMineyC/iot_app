@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../views/integrationComponents/generics.dart';
+import "../utils/snackbar.dart";
 
-import "../views/settings/instanceList.dart";
+import "settings/integrationList.dart";
 import '../../controllers/orchestrator.dart';
 
 class Homescreen extends StatelessWidget {
@@ -13,7 +15,18 @@ class Homescreen extends StatelessWidget {
 
     return Center(
       child: Obx(() => !controller.connected.value ? Text("Not connected to Orchestrator",style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: colors.onErrorContainer))
-      : InstanceList()
+        : ListView(
+          children: [
+            GenericIntegrationComponent(
+              title: "Hello World",
+              child: FilledButton.tonalIcon(
+                onPressed: (){context.showSnackbar("Hello World!");},
+                label: Text("Example"),
+                icon: Icon(Icons.handshake_rounded),
+              )
+            )
+          ]
+        )
       ),
     );
   }

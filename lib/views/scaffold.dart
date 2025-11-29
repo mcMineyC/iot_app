@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import "../views/settings/instanceList.dart";
+import "settings/integrationList.dart";
 import '../../controllers/orchestrator.dart';
 
 class ScaffoldWidget extends StatelessWidget {
@@ -32,13 +32,13 @@ class ScaffoldWidget extends StatelessWidget {
               Get.offAllNamed('/home');
               break;
             case 1:
-              Get.toNamed('/instanceList');
+              Get.toNamed('/integrationList');
               break;
           }
         },
         selectedIndex: switch (Get.routing.current) {  
           '/home' => 0,
-          '/instanceList' => 1,
+          '/integrationList' => 1,
           _ => null,
         },
         children: [
@@ -60,7 +60,7 @@ class ScaffoldWidget extends StatelessWidget {
           //   leading: Icon(Icons.settings, color: colors.onSurface),
           //   title: Text('Settings', style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: colors.onSurface)),
           //   onTap: () {
-          //     Get.to(InstanceList());
+          //     Get.to(IntegrationList());
           //   },
           // ),
         ],
