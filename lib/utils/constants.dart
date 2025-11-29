@@ -1,1 +1,1 @@
-String kVersionString = "1.0.0";
+String kVersionString = "0.0.2";
