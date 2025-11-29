@@ -17,6 +17,8 @@ class IntegrationSchemaView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        surfaceTintColor: Theme.of(context).colorScheme.surface,
         title: Text("Schema for $integrationKey ($providingIntegration)"),
         leading: IconButton(onPressed: () => Get.back(), icon: Icon(Icons.arrow_back)),
       ),
@@ -27,6 +29,45 @@ class IntegrationSchemaView extends StatelessWidget {
           return ListTile(
             title: Text(schema.path),
             subtitle: Text("Type: ${schema.type}\nFetchable: ${schema.fetchable}"),
+            trailing: schema.type != "command" ? null : IconButton(
+              icon: Icon(Icons.send_rounded),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    TextEditingController textController = TextEditingController();
+                    return AlertDialog(
+                      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+                      title: Text("Send data to ${schema.path}"),
+                      content: TextField(
+                        controller: textController,
+                        decoration: InputDecoration(
+                          hintText: "Enter data to send",
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(null),
+                          child: Text("Close"),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(textController.text);
+                          },
+                          child: Text("Send"),
+                        ),
+                      ],
+                    );
+                  },
+                ).then((value) {
+                  if (value != null) {
+                    // Handle any actions after closing the dialog if necessary
+                    orchestratorController.sendMessage("/${integrationKey}${schema.path}", value);
+                  }
+                });
+              },
+            ),
           );
         },
       ) : Center(child: Text("No schema available.")),
