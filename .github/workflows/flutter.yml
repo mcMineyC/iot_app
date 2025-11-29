@@ -123,12 +123,12 @@ jobs:
         with:
           channel: stable
       - run: flutter build macos
-      - run: cp -rf build/macos/Build/Products/Release/iot-app.app Iot-app.app
-      - run: tar --preserve-permissions -czvf iot-app-mac.tar.gz Iot-app.app
+      - run: cp -rf build/macos/Build/Products/Release/iot_app.app Iot_app.app
+      - run: tar --preserve-permissions -czvf iot-app-mac.tar.gz Iot_app.app
       - uses: actions/upload-artifact@v4
         with:
-          name: iot-app-mac.tar.gz
-          path: iot-app-mac.tar.gz
+          name: iot_app-mac.tar.gz
+          path: iot_app-mac.tar.gz
 
   release:
     runs-on: ubuntu-22.04
@@ -154,22 +154,15 @@ jobs:
           path: .
       - uses: actions/download-artifact@v4
         with:
-          name: iot-app-mac.tar.gz
+          name: iot_app-mac.tar.gz
           path: .
-      - uses: actions/download-artifact@v4
-        with:
-          name: iot-app-windows.exe
-          path: .
-      - name: Rename artifacts
-        run: |
-          mv iot-app-windows.exe iot-app-windows.exe
       - name: List downloaded artifacts
         run: ls -R .
 
       - uses: ncipollo/release-action@v1
         with:
           # artifacts: "iot-app-android.apk,iot-app-linux_x64.tar.gz,iot-app-mac.tar.gz,iot-app-windows.exe"
-          artifacts: "iot-app-android.apk,iot-app-linux_x64.tar.gz,iot-app-mac.tar.gz"
+          artifacts: "iot-app-android.apk,iot-app-linux_x64.tar.gz,iot_app-mac.tar.gz"
           tag: v${{ needs.pre-check.outputs.version }}
           makeLatest: true
           name: "v${{ needs.pre-check.outputs.version }} - ${{ steps.date.outputs.date }}"
