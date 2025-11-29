@@ -124,7 +124,7 @@ jobs:
           channel: stable
       - run: flutter build macos
       - run: cp -rf build/macos/Build/Products/Release/iot_app.app Iot_app.app
-      - run: tar --preserve-permissions -czvf iot-app-mac.tar.gz Iot_app.app
+      - run: tar --preserve-permissions -czvf iot_app-mac.tar.gz Iot_app.app
       - uses: actions/upload-artifact@v4
         with:
           name: iot_app-mac.tar.gz
