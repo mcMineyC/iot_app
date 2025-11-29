@@ -7,7 +7,10 @@ import "controllers/preferences.dart";
 import 'controllers/mdns.dart';
 import 'controllers/orchestrator.dart';
 
+import 'views/homeScreen.dart';
 import "views/initialization/searching.dart";
+import 'views/scaffold.dart';
+import 'views/settings/instanceList.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,7 +39,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Flutter Demo',
+      title: 'IoT App',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue, brightness: Brightness.dark),
         fontFamily: 'JetBrainsMono',
@@ -47,6 +50,18 @@ class MyApp extends StatelessWidget {
       defaultTransition: Transition.fadeIn,
       transitionDuration: Duration(milliseconds: 300),
       home: StartingView(),
+      getPages: [
+        GetPage(name: '/starting', page: () => StartingView()),
+        GetPage(name: '/searching', page: () => SearchingView()),
+        GetPage(
+          name: '/home',
+          page: () => ScaffoldWidget(child: Homescreen()),
+        ),
+        GetPage(
+          name: '/instanceList',
+          page: () => ScaffoldWidget(child: InstanceList()),
+        )
+      ],
     );
   }
 }

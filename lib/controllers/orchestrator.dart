@@ -16,6 +16,7 @@ class OrchestratorController extends GetxController {
   var connectionError = "".obs;
 
   var integrationStatus = <IntegrationStatus>[].obs;
+  Map<String, RxMap<String, dynamic>> orchestratorState = <String, RxMap<String, dynamic>>{};
 
   @override
   void onInit() {
@@ -95,6 +96,7 @@ class OrchestratorController extends GetxController {
   }
 
   void handleMessage(String topic, String payload) {
+    print('::MESSAGE:: topic is <$topic>, payload is <-- $payload -->');
     // print('Received message on topic: $topic with payload: $payload');
     if(topic == "/orchestrator/status"){
       Map<String, dynamic> map = jsonDecode(payload);
@@ -105,7 +107,33 @@ class OrchestratorController extends GetxController {
       });
       integrationStatus.value = statuses;
       return;
+    }else if(topic.startsWith("/orchestrator/status/")){
+      String integrationId = topic.split("/").last;
+      Map<String, dynamic> map = jsonDecode(payload);
+      map["id"] = integrationId;
+      IntegrationStatus updatedStatus = IntegrationStatus.fromJson(map);
+      int index = integrationStatus.indexWhere((status) => status.id == integrationId);
+      if(index != -1){
+        integrationStatus[index] = updatedStatus;
+      }else{
+        integrationStatus.add(updatedStatus);
+      }
+      return;
+    }else if(topic == "/orchestrator/state"){
+      Map<String, dynamic> map = jsonDecode(payload);
+      print("Updating orchestrator state with keys: ${map.keys.toList()}");
+      map.forEach((key, value) {
+        orchestratorState[key] = RxMap<String, dynamic>.from(value as Map<String, dynamic>);
+      });
+      return;
     }
+  }
+
+  void startIntegration(String integrationId) {
+    sendMessage("/orchestrator/integration/start", integrationId);
+  }
+  void stopIntegration(String integrationId) {
+    sendMessage("/orchestrator/integration/$integrationId/stop", "");
   }
 
   // Connection logic with retry mechanism

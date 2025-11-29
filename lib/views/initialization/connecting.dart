@@ -57,12 +57,12 @@ class ConnectingView extends StatelessWidget {
               } else if(controller.connectionState.value == "connected"){
                 // Navigate to home screen after a short delay
                 if(prefsController.cachedConnectionString.value.isEmpty){
-                  Future.delayed(Duration(seconds: 1), () => Get.offAll(Homescreen()));
+                  Future.delayed(Duration(seconds: 1), () => Get.offAllNamed('/home'));
 
                   // Cache the connection string to auto-connect next time
                   Get.find<PreferencesController>().cachedConnectionString.value = connectionString;
                 }else{
-                  WidgetsBinding.instance.addPostFrameCallback((_) => Get.offAll(Homescreen()));
+                  WidgetsBinding.instance.addPostFrameCallback((_) => Get.offAllNamed('/home'));
                 }
 
                 return Column(
