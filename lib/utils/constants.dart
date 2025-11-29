@@ -1,0 +1,1 @@
+String kVersionString = "1.0.0";
