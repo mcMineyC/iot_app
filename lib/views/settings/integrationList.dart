@@ -27,7 +27,7 @@ class IntegrationList extends StatelessWidget {
               SizedBox(height: 8),
               Expanded(
                 child: ListView(
-                children: controller.integrationStatus.map((status) {
+                children: controller.integrationStatus.values.map((status) {
                   final description = status.error != 0 ? '\nDescription: ${status.errorDescription}' : '';
                   bool isRunning = status.status.toLowerCase() == 'running';
                   bool isInging = status.status.toLowerCase() == 'starting';

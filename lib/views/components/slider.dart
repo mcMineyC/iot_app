@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:get/get.dart";
 import "package:iot_app/controllers/orchestrator.dart";
+import "package:iot_app/models/orchestrator_integration_status.dart";
 
 import "../integrationComponents/generics.dart";
 import "../../utils/snackbar.dart";
@@ -8,6 +9,18 @@ import "../../utils/snackbar.dart";
 import "dart:async";
 import "dart:ui";
 import "dart:convert";
+
+// evaluator object format
+// min: int
+// max: int
+// step: int
+// value: int
+
+// output transformer format
+// min: int
+// max: int
+// step: int
+// value: int
 
 class IntegrationSlider extends StatefulWidget {
   final String label;
@@ -36,24 +49,55 @@ class _IntegrationSliderState extends State<IntegrationSlider> {
   double _value = 0;
   bool changed = false;
   bool enabled = false;
+  bool online = false;
+
+  void updateOnlineStatus(){
+    print("\n\n\n\tChecking online status for integration ${widget.integrationId}");
+    if(!orchestrator.integrationStatus.containsKey(widget.integrationId)){
+      print("\t------> Integration status not found!");
+      return;
+    }
+    IntegrationStatus status = orchestrator.integrationStatus[widget.integrationId]!;
+    if(status.status == "running") {
+      setState(() {
+        print("\t-----> Integration ${widget.integrationId} is online");
+        online = true;
+      });
+    } else {
+      setState(() {
+        print("\t-----> Integration ${widget.integrationId} is offline");
+        online = false;
+      });
+    }
+  }
+
+  void updateIntegrationState(){
+    if(!orchestrator.orchestratorState.containsKey(widget.integrationId) && enabled == false)
+      return;
+    print("\n\n\n\t\t\tSetting up value");
+    var state = jsonDecode(orchestrator.orchestratorState[widget.integrationId]!["/lightState"]);
+    var tempRange = jsonDecode(orchestrator.orchestratorState[widget.integrationId]!["/temperatureRange"]);
+    int temp = state["color_temp"] ?? 4200;
+    int min = tempRange["min"] ?? 0;
+    int max = tempRange["max"] ?? 100;
+    double val = ((temp - min) * (1 - 0)) / (max - min) + 0;
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {_value = val; enabled = true;}));
+  }
 
   @override
   void initState() {
     super.initState();
     orchestrator = Get.find<OrchestratorController>();
-    ever(orchestrator.integrationStatus)
-    ever(orchestrator.orchestratorState, (_) {
-      if(!orchestrator.orchestratorState.containsKey(widget.integrationId) && enabled == false)
-        return;
-      print("\n\n\n\t\t\tSetting up value");
-      var state = jsonDecode(orchestrator.orchestratorState[widget.integrationId]!["/lightState"]);
-      var tempRange = jsonDecode(orchestrator.orchestratorState[widget.integrationId]!["/temperatureRange"]);
-      int temp = state["color_temp"] ?? 4200;
-      int min = tempRange["min"] ?? 0;
-      int max = tempRange["max"] ?? 100;
-      double val = ((temp - min) * (1 - 0)) / (max - min) + 0;
-      WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {_value = val; enabled = true;}));
+
+    ever(orchestrator.integrationStatus, (_) {
+      updateOnlineStatus();
     });
+    ever(orchestrator.orchestratorState, (_) {
+      updateIntegrationState();
+    });
+    
+    updateIntegrationState();
+    updateOnlineStatus();
   }
 
   void _onChanged(double value, BuildContext context) {
@@ -83,6 +127,7 @@ class _IntegrationSliderState extends State<IntegrationSlider> {
   @override
   Widget build(BuildContext context) {
     return GenericIntegrationComponent(
+      online: online,
       title: widget.label,
       child: RotatedBox(
         quarterTurns: 3,

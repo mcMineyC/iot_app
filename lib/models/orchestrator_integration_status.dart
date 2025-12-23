@@ -18,3 +18,26 @@ abstract class IntegrationStatus with _$IntegrationStatus {
   factory IntegrationStatus.fromJson(Map<String, dynamic> json) =>
       _$IntegrationStatusFromJson(json);
 }
+
+enum IntegrationStatusEnum {
+  running,
+  starting,
+  stopped,
+}
+
+extension IntegrationStatusEnumX on IntegrationStatusEnum {
+  static IntegrationStatusEnum fromString(String? value) {
+    switch (value?.toLowerCase()) {
+      case 'running':
+        return IntegrationStatusEnum.running;
+      case 'starting':
+        return IntegrationStatusEnum.starting;
+      case 'stopped':
+        return IntegrationStatusEnum.stopped;
+      default:
+        throw ArgumentError('Unknown IntegrationStatusEnum: $value');
+    }
+  }
+
+  String toShortString() => toString().split('.').last;
+}

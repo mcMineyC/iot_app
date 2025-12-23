@@ -31,8 +31,9 @@ enum IntegrationUiType{
 class GenericIntegrationComponent extends StatelessWidget {
   final String title;
   final Widget child;
+  final bool online;
 
-  GenericIntegrationComponent({required this.title, required this.child, super.key});
+  GenericIntegrationComponent({required this.title, required this.child, required this.online, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,22 +41,48 @@ class GenericIntegrationComponent extends StatelessWidget {
 
     return Card(
       elevation: 8,
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                fontWeight: FontWeight.bold,
-                color: colors.onPrimaryContainer,
+      child: Stack(
+        children: [
+          if (!online) Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    online ? Icons.wifi : Icons.wifi_off_rounded,
+                    color: colors.error,
+                  ),
+                  SizedBox(width: 4),
+                  Text(
+                    "Integration offline",
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      color: colors.error,
+                    ),
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: 8),
-            child,
-          ],
-        ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colors.onPrimaryContainer,
+                  ),
+                ),
+                SizedBox(height: 8),
+                child,
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

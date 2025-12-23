@@ -120,12 +120,13 @@ class OrchestratorController extends GetxController {
       Map<String, dynamic> map = jsonDecode(payload);
       map["id"] = integrationId;
       IntegrationStatus updatedStatus = IntegrationStatus.fromJson(map);
-      int index = integrationStatus.indexWhere((status) => status.id == integrationId);
-      if(index != -1){
-        integrationStatus[index] = updatedStatus;
-      }else{
-        integrationStatus.add(updatedStatus);
-      }
+      integrationStatus[integrationId] = updatedStatus;
+      // int index = integrationStatus.indexWhere((status) => status.id == integrationId);
+      // if(index != -1){
+      //   integrationStatus[index] = updatedStatus;
+      // }else{
+      //   integrationStatus.add(updatedStatus);
+      // }
       return;
     }else if(topic == "/orchestrator/state"){
       Map<String, dynamic> map = jsonDecode(payload);
