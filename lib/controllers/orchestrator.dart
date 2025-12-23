@@ -14,11 +14,12 @@ import '../utils/route_matching.dart';
 class OrchestratorController extends GetxController {
   final client = MqttServerClient('', 'iot_app_flutter');
   var connected = false.obs;
-  var connectionState = "waiting".obs;
+  var connectionState = "".obs;
   var connectionError = "".obs;
+  var hasConnected = false;
 
-  var integrationStatus = <IntegrationStatus>[].obs;
-  Map<String, RxMap<String, dynamic>> orchestratorState = <String, RxMap<String, dynamic>>{};
+  RxMap<String, IntegrationStatus> integrationStatus = RxMap<String, IntegrationStatus>({});
+  RxMap<String, RxMap<String, dynamic>> orchestratorState = <String, RxMap<String, dynamic>>{}.obs;
   RxMap<String, List<IntegrationSchema>> integrationSchemas = <String, List<IntegrationSchema>>{}.obs;
   RxMap<String, IntegrationConfig> enabledIntegrations = <String, IntegrationConfig>{}.obs;
 
@@ -51,6 +52,8 @@ class OrchestratorController extends GetxController {
     client.logging(on: false);
     client.keepAlivePeriod = 20;
     client.onDisconnected = () {
+      if(!hasConnected)
+        return;
       print('MQTT client disconnected');
       connectionState.value = "disconnected";
       _connect();
@@ -81,6 +84,7 @@ class OrchestratorController extends GetxController {
     client.server = ip;
     client.port = port;
     await _connect();
+    hasConnected = true;
     return connectionState.value == "connected";
   }
 
@@ -107,9 +111,9 @@ class OrchestratorController extends GetxController {
       List<IntegrationStatus> statuses = [];
       map.forEach((key, value) {
         value["id"] = key;
-        statuses.add(IntegrationStatus.fromJson(value as Map<String, dynamic>));
+        integrationStatus[key] = IntegrationStatus.fromJson(value as Map<String, dynamic>);
       });
-      integrationStatus.value = statuses;
+      // integrationStatus.value = statuses;
       return;
     }else if(topic.startsWith("/orchestrator/status/")){
       String integrationId = topic.split("/").last;
@@ -166,6 +170,7 @@ class OrchestratorController extends GetxController {
       client.disconnect();
       connectionState.value = "disconnected";
     }
+    print("\t\tStarting connection process...");
     int attempt = 0;
     while (attempt < maxRetries) {
       attempt++;
@@ -206,6 +211,7 @@ class OrchestratorController extends GetxController {
       } else {
         print('Max retry attempts reached. Giving up.');
         connected.value = false;
+        return;
       }
     }
   }

@@ -15,9 +15,12 @@ class ConnectingView extends StatelessWidget {
   Widget build(BuildContext context) {
     ColorScheme colors = Theme.of(context).colorScheme;
 
-    if(controller.connectionState.value == "waiting"){
-      controller.connect(connectionString);
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if(controller.connectionState.value == ""){
+        controller.connect(connectionString);
+        print("LINE 20");
+      }
+    });
 
     return Scaffold(
       body: Container(
@@ -45,12 +48,23 @@ class ConnectingView extends StatelessWidget {
                     SizedBox(height: 8),
                     Text(controller.connectionError.value, style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: colors.onPrimaryContainer)),
                     // SizedBox(height: 8),
-                    FilledButton.tonalIcon(
-                      onPressed: () {
-                        controller.connect(connectionString);
-                      },
-                      label: Text("Retry"),
-                      icon: Icon(Icons.refresh_rounded),
+                    Row(
+                      children: [
+                        FilledButton.tonalIcon(
+                          onPressed: () {
+                            controller.connect(connectionString);
+                          },
+                          label: Text("Discover"),
+                          icon: Icon(Icons.search_rounded),
+                        ),
+                        OutlinedButton.icon(
+                          onPressed: () {
+                            controller.connect(connectionString);
+                          },
+                          label: Text("Retry"),
+                          icon: Icon(Icons.refresh_rounded),
+                        ),
+                      ],
                     ),
                   ],
                 );

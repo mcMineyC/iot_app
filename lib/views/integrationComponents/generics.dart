@@ -1,4 +1,32 @@
 import "package:flutter/material.dart";
+import "package:freezed_annotation/freezed_annotation.dart";
+
+part 'generics.freezed.dart';
+part 'generics.g.dart';
+
+@freezed
+abstract class IntegrationUiDefinition with _$IntegrationUiDefinition {
+  const factory IntegrationUiDefinition({
+    required String label,
+    required String integrationId,
+    required IntegrationUiType type,
+    required String path,
+    String? evaluatorScript,
+    String? outputTransformer,
+
+  }) = _IntegrationUiDefinition;
+  factory IntegrationUiDefinition.fromJson(Map<String, dynamic> json) => _$IntegrationUiDefinitionFromJson(json);
+}
+enum IntegrationUiType{
+  button,
+  slider,
+  toggle,
+  // textInput,
+  // dropdown,
+  // colorPicker,
+  // custom
+}
+
 
 class GenericIntegrationComponent extends StatelessWidget {
   final String title;
