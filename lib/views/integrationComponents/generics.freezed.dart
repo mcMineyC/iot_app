@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$IntegrationUiDefinition {
 
- String get label; String get integrationId; IntegrationUiType get type; String get path; String? get evaluatorScript; String? get outputTransformer;
+ String get label; String get integrationId; IntegrationUiType get type; String get dataPath; String? get evaluatorScript; String? get outputTransformer;
 /// Create a copy of IntegrationUiDefinition
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $IntegrationUiDefinitionCopyWith<IntegrationUiDefinition> get copyWith => _$Inte
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is IntegrationUiDefinition&&(identical(other.label, label) || other.label == label)&&(identical(other.integrationId, integrationId) || other.integrationId == integrationId)&&(identical(other.type, type) || other.type == type)&&(identical(other.path, path) || other.path == path)&&(identical(other.evaluatorScript, evaluatorScript) || other.evaluatorScript == evaluatorScript)&&(identical(other.outputTransformer, outputTransformer) || other.outputTransformer == outputTransformer));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is IntegrationUiDefinition&&(identical(other.label, label) || other.label == label)&&(identical(other.integrationId, integrationId) || other.integrationId == integrationId)&&(identical(other.type, type) || other.type == type)&&(identical(other.dataPath, dataPath) || other.dataPath == dataPath)&&(identical(other.evaluatorScript, evaluatorScript) || other.evaluatorScript == evaluatorScript)&&(identical(other.outputTransformer, outputTransformer) || other.outputTransformer == outputTransformer));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,label,integrationId,type,path,evaluatorScript,outputTransformer);
+int get hashCode => Object.hash(runtimeType,label,integrationId,type,dataPath,evaluatorScript,outputTransformer);
 
 @override
 String toString() {
-  return 'IntegrationUiDefinition(label: $label, integrationId: $integrationId, type: $type, path: $path, evaluatorScript: $evaluatorScript, outputTransformer: $outputTransformer)';
+  return 'IntegrationUiDefinition(label: $label, integrationId: $integrationId, type: $type, dataPath: $dataPath, evaluatorScript: $evaluatorScript, outputTransformer: $outputTransformer)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $IntegrationUiDefinitionCopyWith<$Res>  {
   factory $IntegrationUiDefinitionCopyWith(IntegrationUiDefinition value, $Res Function(IntegrationUiDefinition) _then) = _$IntegrationUiDefinitionCopyWithImpl;
 @useResult
 $Res call({
- String label, String integrationId, IntegrationUiType type, String path, String? evaluatorScript, String? outputTransformer
+ String label, String integrationId, IntegrationUiType type, String dataPath, String? evaluatorScript, String? outputTransformer
 });
 
 
@@ -65,12 +65,12 @@ class _$IntegrationUiDefinitionCopyWithImpl<$Res>
 
 /// Create a copy of IntegrationUiDefinition
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? label = null,Object? integrationId = null,Object? type = null,Object? path = null,Object? evaluatorScript = freezed,Object? outputTransformer = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? label = null,Object? integrationId = null,Object? type = null,Object? dataPath = null,Object? evaluatorScript = freezed,Object? outputTransformer = freezed,}) {
   return _then(_self.copyWith(
 label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String,integrationId: null == integrationId ? _self.integrationId : integrationId // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
-as IntegrationUiType,path: null == path ? _self.path : path // ignore: cast_nullable_to_non_nullable
+as IntegrationUiType,dataPath: null == dataPath ? _self.dataPath : dataPath // ignore: cast_nullable_to_non_nullable
 as String,evaluatorScript: freezed == evaluatorScript ? _self.evaluatorScript : evaluatorScript // ignore: cast_nullable_to_non_nullable
 as String?,outputTransformer: freezed == outputTransformer ? _self.outputTransformer : outputTransformer // ignore: cast_nullable_to_non_nullable
 as String?,
@@ -158,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String label,  String integrationId,  IntegrationUiType type,  String path,  String? evaluatorScript,  String? outputTransformer)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String label,  String integrationId,  IntegrationUiType type,  String dataPath,  String? evaluatorScript,  String? outputTransformer)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _IntegrationUiDefinition() when $default != null:
-return $default(_that.label,_that.integrationId,_that.type,_that.path,_that.evaluatorScript,_that.outputTransformer);case _:
+return $default(_that.label,_that.integrationId,_that.type,_that.dataPath,_that.evaluatorScript,_that.outputTransformer);case _:
   return orElse();
 
 }
@@ -179,10 +179,10 @@ return $default(_that.label,_that.integrationId,_that.type,_that.path,_that.eval
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String label,  String integrationId,  IntegrationUiType type,  String path,  String? evaluatorScript,  String? outputTransformer)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String label,  String integrationId,  IntegrationUiType type,  String dataPath,  String? evaluatorScript,  String? outputTransformer)  $default,) {final _that = this;
 switch (_that) {
 case _IntegrationUiDefinition():
-return $default(_that.label,_that.integrationId,_that.type,_that.path,_that.evaluatorScript,_that.outputTransformer);case _:
+return $default(_that.label,_that.integrationId,_that.type,_that.dataPath,_that.evaluatorScript,_that.outputTransformer);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -199,10 +199,10 @@ return $default(_that.label,_that.integrationId,_that.type,_that.path,_that.eval
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String label,  String integrationId,  IntegrationUiType type,  String path,  String? evaluatorScript,  String? outputTransformer)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String label,  String integrationId,  IntegrationUiType type,  String dataPath,  String? evaluatorScript,  String? outputTransformer)?  $default,) {final _that = this;
 switch (_that) {
 case _IntegrationUiDefinition() when $default != null:
-return $default(_that.label,_that.integrationId,_that.type,_that.path,_that.evaluatorScript,_that.outputTransformer);case _:
+return $default(_that.label,_that.integrationId,_that.type,_that.dataPath,_that.evaluatorScript,_that.outputTransformer);case _:
   return null;
 
 }
@@ -214,13 +214,13 @@ return $default(_that.label,_that.integrationId,_that.type,_that.path,_that.eval
 @JsonSerializable()
 
 class _IntegrationUiDefinition implements IntegrationUiDefinition {
-  const _IntegrationUiDefinition({required this.label, required this.integrationId, required this.type, required this.path, this.evaluatorScript, this.outputTransformer});
+  const _IntegrationUiDefinition({required this.label, required this.integrationId, required this.type, required this.dataPath, this.evaluatorScript, this.outputTransformer});
   factory _IntegrationUiDefinition.fromJson(Map<String, dynamic> json) => _$IntegrationUiDefinitionFromJson(json);
 
 @override final  String label;
 @override final  String integrationId;
 @override final  IntegrationUiType type;
-@override final  String path;
+@override final  String dataPath;
 @override final  String? evaluatorScript;
 @override final  String? outputTransformer;
 
@@ -237,16 +237,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _IntegrationUiDefinition&&(identical(other.label, label) || other.label == label)&&(identical(other.integrationId, integrationId) || other.integrationId == integrationId)&&(identical(other.type, type) || other.type == type)&&(identical(other.path, path) || other.path == path)&&(identical(other.evaluatorScript, evaluatorScript) || other.evaluatorScript == evaluatorScript)&&(identical(other.outputTransformer, outputTransformer) || other.outputTransformer == outputTransformer));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _IntegrationUiDefinition&&(identical(other.label, label) || other.label == label)&&(identical(other.integrationId, integrationId) || other.integrationId == integrationId)&&(identical(other.type, type) || other.type == type)&&(identical(other.dataPath, dataPath) || other.dataPath == dataPath)&&(identical(other.evaluatorScript, evaluatorScript) || other.evaluatorScript == evaluatorScript)&&(identical(other.outputTransformer, outputTransformer) || other.outputTransformer == outputTransformer));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,label,integrationId,type,path,evaluatorScript,outputTransformer);
+int get hashCode => Object.hash(runtimeType,label,integrationId,type,dataPath,evaluatorScript,outputTransformer);
 
 @override
 String toString() {
-  return 'IntegrationUiDefinition(label: $label, integrationId: $integrationId, type: $type, path: $path, evaluatorScript: $evaluatorScript, outputTransformer: $outputTransformer)';
+  return 'IntegrationUiDefinition(label: $label, integrationId: $integrationId, type: $type, dataPath: $dataPath, evaluatorScript: $evaluatorScript, outputTransformer: $outputTransformer)';
 }
 
 
@@ -257,7 +257,7 @@ abstract mixin class _$IntegrationUiDefinitionCopyWith<$Res> implements $Integra
   factory _$IntegrationUiDefinitionCopyWith(_IntegrationUiDefinition value, $Res Function(_IntegrationUiDefinition) _then) = __$IntegrationUiDefinitionCopyWithImpl;
 @override @useResult
 $Res call({
- String label, String integrationId, IntegrationUiType type, String path, String? evaluatorScript, String? outputTransformer
+ String label, String integrationId, IntegrationUiType type, String dataPath, String? evaluatorScript, String? outputTransformer
 });
 
 
@@ -274,12 +274,12 @@ class __$IntegrationUiDefinitionCopyWithImpl<$Res>
 
 /// Create a copy of IntegrationUiDefinition
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? label = null,Object? integrationId = null,Object? type = null,Object? path = null,Object? evaluatorScript = freezed,Object? outputTransformer = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? label = null,Object? integrationId = null,Object? type = null,Object? dataPath = null,Object? evaluatorScript = freezed,Object? outputTransformer = freezed,}) {
   return _then(_IntegrationUiDefinition(
 label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String,integrationId: null == integrationId ? _self.integrationId : integrationId // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
-as IntegrationUiType,path: null == path ? _self.path : path // ignore: cast_nullable_to_non_nullable
+as IntegrationUiType,dataPath: null == dataPath ? _self.dataPath : dataPath // ignore: cast_nullable_to_non_nullable
 as String,evaluatorScript: freezed == evaluatorScript ? _self.evaluatorScript : evaluatorScript // ignore: cast_nullable_to_non_nullable
 as String?,outputTransformer: freezed == outputTransformer ? _self.outputTransformer : outputTransformer // ignore: cast_nullable_to_non_nullable
 as String?,

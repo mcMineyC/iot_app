@@ -4,20 +4,20 @@ String kVersionString = "0.0.3.0";
 List<IntegrationUiDefinition> kDashboardConfig = [
   IntegrationUiDefinition(
     label: "Bedside Bulb",
-    integrationId: "desk-bulb",
+    integrationId: "bed-bulb",
     type: IntegrationUiType.button,
-    path: "/power/toggle"
+    dataPath: "/power/toggle"
   ),
   IntegrationUiDefinition(
     label: "Bed Temperature",
-    integrationId: "desk-bulb",
+    integrationId: "bed-bulb",
     type: IntegrationUiType.slider,
-    path: "/light/temperature"
+    dataPath: "/light/temperature"
   ),
   IntegrationUiDefinition(
     label: "Broom Closet Ending",
     integrationId: "broom-closet-ending",
     type: IntegrationUiType.button,
-    path: "/power/toggle"
+    dataPath: "/power/toggle"
   )
 ];

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:iot_app/utils/hetu_wrapper.dart';
 import 'package:iot_app/views/initialization/starting.dart';
 import "package:shared_preferences/shared_preferences.dart";
 
@@ -29,6 +30,11 @@ void main() async {
   await mdnsController.init();
   Get.put(mdnsController);
   Get.put(OrchestratorController());
+
+  final HetuWrapper hetu = HetuWrapper(); // references OrhcestratorController internally
+  await hetu.initialize();
+  Get.put(hetu);
+
   runApp(const MyApp());
 }
 

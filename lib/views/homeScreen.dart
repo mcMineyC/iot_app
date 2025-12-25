@@ -23,14 +23,14 @@ class Homescreen extends StatelessWidget {
             IntegrationUiType.button => IntegrationButton(
               label: e.label,
               integrationId: e.integrationId,
-              actionPath: e.path,
+              actionPath: e.dataPath,
               evaluatorScript: e.evaluatorScript,
               outputTransformer: e.outputTransformer,
             ),
             IntegrationUiType.slider => IntegrationSlider(
               label: e.label,
               integrationId: e.integrationId,
-              actionPath: e.path,
+              actionPath: e.dataPath,
               evaluatorScript: e.evaluatorScript,
               outputTransformer: e.outputTransformer,
             ),

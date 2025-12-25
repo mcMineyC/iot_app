@@ -22,6 +22,7 @@ class OrchestratorController extends GetxController {
   RxMap<String, RxMap<String, dynamic>> orchestratorState = <String, RxMap<String, dynamic>>{}.obs;
   RxMap<String, List<IntegrationSchema>> integrationSchemas = <String, List<IntegrationSchema>>{}.obs;
   RxMap<String, IntegrationConfig> enabledIntegrations = <String, IntegrationConfig>{}.obs;
+  RxMap<String, bool> haveIntegrationData = <String, bool>{}.obs;
 
   @override
   void onInit() {
@@ -129,10 +130,26 @@ class OrchestratorController extends GetxController {
       // }
       return;
     }else if(topic == "/orchestrator/state"){
+      print("PAYLOAD: $payload");
       Map<String, dynamic> map = jsonDecode(payload);
       print("Updating orchestrator state with keys: ${map.keys.toList()}");
       map.forEach((key, value) {
-        orchestratorState[key] = RxMap<String, dynamic>.from(value as Map<String, dynamic>);
+        final Map<String, dynamic> rawMap = value as Map<String, dynamic>;
+        final parsed = <String, dynamic>{};
+        rawMap.forEach((k, v) {
+          if (v is String) {
+            try {
+              final decoded = jsonDecode(v);
+              parsed[k] = decoded;
+            } catch (_) {
+              parsed[k] = v;
+            }
+          } else {
+            parsed[k] = v;
+          }
+        });
+        orchestratorState[key] = RxMap<String, dynamic>.from(parsed);
+        haveIntegrationData[key] = true;
       });
       return;
     }else if(topic == "/orchestrator/schemas"){

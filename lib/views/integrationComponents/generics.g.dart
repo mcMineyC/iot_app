@@ -12,7 +12,7 @@ _IntegrationUiDefinition _$IntegrationUiDefinitionFromJson(
   label: json['label'] as String,
   integrationId: json['integrationId'] as String,
   type: $enumDecode(_$IntegrationUiTypeEnumMap, json['type']),
-  path: json['path'] as String,
+  dataPath: json['dataPath'] as String,
   evaluatorScript: json['evaluatorScript'] as String?,
   outputTransformer: json['outputTransformer'] as String?,
 );
@@ -23,7 +23,7 @@ Map<String, dynamic> _$IntegrationUiDefinitionToJson(
   'label': instance.label,
   'integrationId': instance.integrationId,
   'type': _$IntegrationUiTypeEnumMap[instance.type]!,
-  'path': instance.path,
+  'dataPath': instance.dataPath,
   'evaluatorScript': instance.evaluatorScript,
   'outputTransformer': instance.outputTransformer,
 };

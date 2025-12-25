@@ -10,7 +10,7 @@ abstract class IntegrationUiDefinition with _$IntegrationUiDefinition {
     required String label,
     required String integrationId,
     required IntegrationUiType type,
-    required String path,
+    required String dataPath,
     String? evaluatorScript,
     String? outputTransformer,
 

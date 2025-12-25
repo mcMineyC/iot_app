@@ -3,6 +3,7 @@ import "package:get/get.dart";
 import "package:iot_app/controllers/orchestrator.dart";
 import "package:iot_app/models/orchestrator_integration_status.dart";
 
+import "../../utils/hetu_wrapper.dart";
 import "../integrationComponents/generics.dart";
 import "../../utils/snackbar.dart";
 
@@ -45,8 +46,10 @@ class IntegrationSlider extends StatefulWidget {
 
 class _IntegrationSliderState extends State<IntegrationSlider> {
   late final OrchestratorController orchestrator;
+  late final HetuWrapper hetu;
   Timer? _debounceTimer;
   double _value = 0;
+  bool setupChangeListener = false;
   bool changed = false;
   bool enabled = false;
   bool online = false;
@@ -72,31 +75,58 @@ class _IntegrationSliderState extends State<IntegrationSlider> {
   }
 
   void updateIntegrationState(){
-    if(!orchestrator.orchestratorState.containsKey(widget.integrationId) && enabled == false)
+    if(!orchestrator.orchestratorState.containsKey(widget.integrationId))
       return;
+    var state = orchestrator.orchestratorState[widget.integrationId]!;
     print("\n\n\n\t\t\tSetting up value");
-    var state = jsonDecode(orchestrator.orchestratorState[widget.integrationId]!["/lightState"]);
-    var tempRange = jsonDecode(orchestrator.orchestratorState[widget.integrationId]!["/temperatureRange"]);
-    int temp = state["color_temp"] ?? 4200;
-    int min = tempRange["min"] ?? 0;
-    int max = tempRange["max"] ?? 100;
-    double val = ((temp - min) * (1 - 0)) / (max - min) + 0;
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {_value = val; enabled = true;}));
+    print("HETU EVALUATOR\n\n\n");
+    print(hetu.executeEvaluator(
+'''
+fun evaluate(props) {
+  return {
+    "value": props["/lightState"]["color_temp"],
+    "min": props["/temperatureRange"]["min"],
+    "max": props["/temperatureRange"]["max"],
+  }
+}
+''', state as Map<String, dynamic>));
+    // var state = jsonDecode(orchestrator.orchestratorState[widget.integrationId]!["/lightState"]);
+    // var tempRange = jsonDecode(orchestrator.orchestratorState[widget.integrationId]!["/temperatureRange"]);
+    // print(orchestrator.orchestratorState[widget.integrationId]!["/temperatureRange"].runtimeType);
+    // int temp = state["color_temp"] ?? 4200;
+    // int min = tempRange["min"] ?? 0;
+    // int max = tempRange["max"] ?? 100;
+    // double val = ((temp - min) * (1 - 0)) / (max - min) + 0;
+    // WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {_value = val; enabled = true;}));
   }
 
+  void checkForIntegrationData(){
+    if(setupChangeListener)
+      return;
+    setupChangeListener = true;
+    ever(orchestrator.orchestratorState[widget.integrationId]!, (_) {
+      updateIntegrationState();
+    });
+    updateIntegrationState();
+  }
   @override
   void initState() {
     super.initState();
     orchestrator = Get.find<OrchestratorController>();
+    hetu = Get.find<HetuWrapper>();
 
     ever(orchestrator.integrationStatus, (_) {
       updateOnlineStatus();
     });
-    ever(orchestrator.orchestratorState, (_) {
-      updateIntegrationState();
+    // ever(orchestrator.orchestratorState, (_) {
+    //   updateIntegrationState();
+    // });
+    ever(orchestrator.haveIntegrationData, (_) {
+      checkForIntegrationData();
     });
-    
-    updateIntegrationState();
+
+    checkForIntegrationData();    
+    // updateIntegrationState(); // This is now called if we have the state!
     updateOnlineStatus();
   }
 
@@ -112,7 +142,7 @@ class _IntegrationSliderState extends State<IntegrationSlider> {
           lerpDouble(temp["min"] ?? 0, temp["max"] ?? 100, value)!.toInt().toString()
         );
       } catch (e) {
-        rethrow;
+        // rethrow;
         context.showSnackbar("Error: "+e.toString());
       }
     });
