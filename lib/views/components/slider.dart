@@ -47,6 +47,9 @@ class IntegrationSlider extends StatefulWidget {
 class _IntegrationSliderState extends State<IntegrationSlider> {
   late final OrchestratorController orchestrator;
   late final HetuWrapper hetu;
+  int min = 0;
+  int max = 100;
+  int value = 0;
   Timer? _debounceTimer;
   double _value = 0;
   bool setupChangeListener = false;
@@ -80,16 +83,23 @@ class _IntegrationSliderState extends State<IntegrationSlider> {
     var state = orchestrator.orchestratorState[widget.integrationId]!;
     print("\n\n\n\t\t\tSetting up value");
     print("HETU EVALUATOR\n\n\n");
-    print(hetu.executeEvaluator(
-'''
-fun evaluate(props) {
-  return {
-    "value": props["/lightState"]["color_temp"],
-    "min": props["/temperatureRange"]["min"],
-    "max": props["/temperatureRange"]["max"],
-  }
-}
-''', state as Map<String, dynamic>));
+    try {
+      var result = hetu.executeEvaluator(
+        '''
+      fun evaluate(props) {
+        return {
+          "value": props["/lightState"]["color_temp"],
+          "min": props["/temperatureRange"]["min"],
+          "max": props["/temperatureRange"]["max"],
+        }
+      }
+    ''', state as Map<String, dynamic>);
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {min = result["min"]; max = result["max"]; value = result["value"]; _value = value.toDouble(); enabled = true;}));
+    
+    } catch (e) {
+      context.showSnackbar("Error in evaluator script: "+e.toString());
+      return;
+    }
     // var state = jsonDecode(orchestrator.orchestratorState[widget.integrationId]!["/lightState"]);
     // var tempRange = jsonDecode(orchestrator.orchestratorState[widget.integrationId]!["/temperatureRange"]);
     // print(orchestrator.orchestratorState[widget.integrationId]!["/temperatureRange"].runtimeType);
@@ -136,13 +146,14 @@ fun evaluate(props) {
     _debounceTimer?.cancel();
     _debounceTimer = Timer(Duration(milliseconds: widget.debounceDelay), () {
       try {
-        Map<String, dynamic> temp = jsonDecode(orchestrator.orchestratorState[widget.integrationId]!["/temperatureRange"]);
+        // Map<String, dynamic> temp = jsonDecode(orchestrator.orchestratorState[widget.integrationId]!["/temperatureRange"]);
         orchestrator.sendMessage(
           "/${widget.integrationId}${widget.actionPath}",
-          lerpDouble(temp["min"] ?? 0, temp["max"] ?? 100, value)!.toInt().toString()
+          _value.toInt().toString(),
+          // lerpDouble(temp["min"] ?? 0, temp["max"] ?? 100, value)!.toInt().toString()
         );
       } catch (e) {
-        // rethrow;
+        rethrow;
         context.showSnackbar("Error: "+e.toString());
       }
     });
@@ -164,8 +175,8 @@ fun evaluate(props) {
         child: Slider(
           year2023: false,
           value: _value,
-          min: 0,
-          max: 1,
+          min: min.toDouble(),
+          max: max.toDouble(),
           divisions: 100,
           onChanged: !enabled ? null : (double v) => _onChanged(v, context),
         ),
