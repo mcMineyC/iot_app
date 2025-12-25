@@ -89,6 +89,8 @@ class _IntegrationSliderState extends State<IntegrationSlider> {
       fun evaluate(props) {
         return {
           "value": props["/lightState"]["color_temp"],
+          // "min": 0,
+          // "max": 100,
           "min": props["/temperatureRange"]["min"],
           "max": props["/temperatureRange"]["max"],
         }
@@ -112,6 +114,8 @@ class _IntegrationSliderState extends State<IntegrationSlider> {
 
   void checkForIntegrationData(){
     if(setupChangeListener)
+      return;
+    if(!orchestrator.haveIntegrationData.containsKey(widget.integrationId))
       return;
     setupChangeListener = true;
     ever(orchestrator.orchestratorState[widget.integrationId]!, (_) {

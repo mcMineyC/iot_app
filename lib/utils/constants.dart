@@ -15,6 +15,12 @@ List<IntegrationUiDefinition> kDashboardConfig = [
     dataPath: "/light/temperature"
   ),
   IntegrationUiDefinition(
+    label: "Bed Temperature",
+    integrationId: "bed-bulb",
+    type: IntegrationUiType.slider,
+    dataPath: "/light/temperature"
+  ),
+  IntegrationUiDefinition(
     label: "Broom Closet Ending",
     integrationId: "broom-closet-ending",
     type: IntegrationUiType.button,

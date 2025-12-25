@@ -71,4 +71,32 @@ class HetuWrapper {
 
     return Map<String, dynamic>.from(result);
   }
+
+
+  void executeTransformer(
+    String script,
+    Map<String, dynamic> props,
+  ) {
+    final hash = script.hashCode;
+    print("Executing evaluator script:\n${prependScript + script}");
+
+    if (!_modules.containsKey(hash)) {
+      final module = 'transformer_$hash';
+      _hetu.eval(prependScript + script, moduleName: module);
+      print("Registered evaluator module: $module");
+      _modules[hash] = module;
+    }
+    print("Props passed to evaluator: $props");
+    var result = _hetu.invoke(
+      'transform',
+      moduleName: _modules["transformer_$hash"],
+      positionalArgs: [props],
+    );
+    if (result is HTStruct) {
+      result = result.toJson();
+    }
+    print("Evaluator result: $result");
+
+    // return Map<String, dynamic>.from(result);
+  }
 }
