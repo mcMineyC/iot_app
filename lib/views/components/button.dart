@@ -10,14 +10,14 @@ import "../../utils/snackbar.dart";
 class IntegrationButton extends StatefulWidget {
   final String label;
   final String integrationId;
-  final String? evaluatorScript;
+  final String evaluatorScript;
   final String outputTransformer;
 
   const IntegrationButton({
     Key? key,
     required this.label,
     required this.integrationId,
-    this.evaluatorScript,
+    required this.evaluatorScript,
     required this.outputTransformer,
   }) : super(key: key);
 
@@ -67,8 +67,6 @@ class _IntegrationButtonState extends State<IntegrationButton> {
       child: FilledButton.tonalIcon(
         onPressed: () {
           hetu.executeTransformer(widget.outputTransformer, widget.integrationId, {"value": true});
-          // context.showSnackbar("Hello World!");
-          // orchestrator.sendMessage('/${widget.integrationId}${widget.actionPath}', '');
         },
         label: Text(widget.label),
         icon: const Icon(Icons.handshake_rounded),

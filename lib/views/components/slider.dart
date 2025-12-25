@@ -26,7 +26,6 @@ import "dart:convert";
 class IntegrationSlider extends StatefulWidget {
   final String label;
   final String integrationId;
-  // final String actionPath;
   final String evaluatorScript;
   final String outputTransformer;
   final int debounceDelay = 300;
@@ -35,7 +34,6 @@ class IntegrationSlider extends StatefulWidget {
     Key? key,
     required this.label,
     required this.integrationId,
-    // required this.actionPath,
     required this.evaluatorScript,
     required this.outputTransformer,
   }) : super(key: key);
@@ -94,14 +92,6 @@ class _IntegrationSliderState extends State<IntegrationSlider> {
       WidgetsBinding.instance.addPostFrameCallback((_) {context.showSnackbar( "Error in evaluator script for integration ${widget.integrationId}: "+e.toString());});
       return;
     }
-    // var state = jsonDecode(orchestrator.orchestratorState[widget.integrationId]!["/lightState"]);
-    // var tempRange = jsonDecode(orchestrator.orchestratorState[widget.integrationId]!["/temperatureRange"]);
-    // print(orchestrator.orchestratorState[widget.integrationId]!["/temperatureRange"].runtimeType);
-    // int temp = state["color_temp"] ?? 4200;
-    // int min = tempRange["min"] ?? 0;
-    // int max = tempRange["max"] ?? 100;
-    // double val = ((temp - min) * (1 - 0)) / (max - min) + 0;
-    // WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {_value = val; enabled = true;}));
   }
 
   void checkForIntegrationData(){
@@ -124,15 +114,12 @@ class _IntegrationSliderState extends State<IntegrationSlider> {
     ever(orchestrator.integrationStatus, (_) {
       updateOnlineStatus();
     });
-    // ever(orchestrator.orchestratorState, (_) {
-    //   updateIntegrationState();
-    // });
     ever(orchestrator.haveIntegrationData, (_) {
       checkForIntegrationData();
     });
 
     checkForIntegrationData();    
-    // updateIntegrationState(); // This is now called if we have the state!
+    
     updateOnlineStatus();
   }
 
@@ -142,17 +129,6 @@ class _IntegrationSliderState extends State<IntegrationSlider> {
     _debounceTimer?.cancel();
     _debounceTimer = Timer(Duration(milliseconds: widget.debounceDelay), () {
       hetu.executeTransformer(widget.outputTransformer, widget.integrationId, {"min": min, "max": max, "value": _value.toInt()});
-      // try {
-      //   Map<String, dynamic> temp = jsonDecode(orchestrator.orchestratorState[widget.integrationId]!["/temperatureRange"]);
-      //   orchestrator.sendMessage(
-      //     "/${widget.integrationId}${widget.actionPath}",
-      //     _value.toInt().toString(),
-      //     lerpDouble(temp["min"] ?? 0, temp["max"] ?? 100, value)!.toInt().toString()
-      //   );
-      // } catch (e) {
-      //   rethrow;
-      //   context.showSnackbar("Error: "+e.toString());
-      // }
     });
   }
 
