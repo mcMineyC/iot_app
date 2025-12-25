@@ -49,14 +49,16 @@ class ConnectingView extends StatelessWidget {
                     Text(controller.connectionError.value, style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: colors.onPrimaryContainer)),
                     // SizedBox(height: 8),
                     Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         FilledButton.tonalIcon(
                           onPressed: () {
-                            controller.connect(connectionString);
+                            Get.offNamed("/searching");
                           },
                           label: Text("Discover"),
                           icon: Icon(Icons.search_rounded),
                         ),
+                        SizedBox(width: 16),
                         OutlinedButton.icon(
                           onPressed: () {
                             controller.connect(connectionString);

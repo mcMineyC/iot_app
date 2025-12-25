@@ -12,6 +12,7 @@ import 'views/homeScreen.dart';
 import "views/initialization/searching.dart";
 import 'views/scaffold.dart';
 import 'views/settings/integrationList.dart';
+import 'views/settings/settings.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -66,6 +67,10 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: '/integrationList',
           page: () => ScaffoldWidget(child: IntegrationList()),
+        ),
+        GetPage(
+          name: '/settings',
+          page: () => ScaffoldWidget(child: SettingsView()),
         )
       ],
     );

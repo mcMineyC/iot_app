@@ -5,7 +5,7 @@ import "package:iot_app/controllers/orchestrator.dart";
 import "../../models/orchestrator_integration_status.dart";
 import "../../utils/eval_wrapper.dart";
 import "../../utils/icon_map.dart";
-import "../integrationComponents/generics.dart";
+import "generics.dart";
 import "../../utils/snackbar.dart";
 
 class integrationComponent extends StatefulWidget {

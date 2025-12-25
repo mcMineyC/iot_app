@@ -17,6 +17,7 @@ class OrchestratorController extends GetxController {
   var connectionState = "".obs;
   var connectionError = "".obs;
   var hasConnected = false;
+  bool tryingToConnect = false;
 
   RxMap<String, IntegrationStatus> integrationStatus = RxMap<String, IntegrationStatus>({});
   RxMap<String, RxMap<String, dynamic>> orchestratorState = <String, RxMap<String, dynamic>>{}.obs;
@@ -53,7 +54,7 @@ class OrchestratorController extends GetxController {
     client.logging(on: false);
     client.keepAlivePeriod = 20;
     client.onDisconnected = () {
-      if(!hasConnected)
+      if(!hasConnected || tryingToConnect)
         return;
       print('MQTT client disconnected');
       connectionState.value = "disconnected";
@@ -80,12 +81,14 @@ class OrchestratorController extends GetxController {
   }
 
   Future<bool> connect(String connectionString) async {
+    tryingToConnect = true;
     String ip = connectionString.split(":")[0];
     int port = int.parse(connectionString.split(":")[1]);
     client.server = ip;
     client.port = port;
     await _connect();
     hasConnected = true;
+    tryingToConnect = false;
     return connectionState.value == "connected";
   }
 
@@ -184,6 +187,7 @@ class OrchestratorController extends GetxController {
 
   // Connection logic with retry mechanism
   Future<void> _connect({int maxRetries = 3, Duration retryDelay = const Duration(seconds: 2)}) async {
+    tryingToConnect = true;
     if(connectionState.value == "connected"){
       client.disconnect();
       connectionState.value = "disconnected";
@@ -229,6 +233,7 @@ class OrchestratorController extends GetxController {
       } else {
         print('Max retry attempts reached. Giving up.');
         connected.value = false;
+        tryingToConnect = false;
         return;
       }
     }

@@ -4,7 +4,7 @@ import "package:iot_app/controllers/orchestrator.dart";
 import "package:iot_app/models/orchestrator_integration_status.dart";
 
 import "../../utils/eval_wrapper.dart";
-import "../integrationComponents/generics.dart";
+import "generics.dart";
 import "../../utils/snackbar.dart";
 
 import "dart:async";

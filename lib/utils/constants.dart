@@ -1,8 +1,8 @@
-import '../views/integrationComponents/generics.dart';
+import '../views/components/generics.dart';
 
 String kVersionString = "0.0.5.0";
 List<dynamic> kDashboardConfig = [
-  IntegrationUiDefinition(
+  [IntegrationUiDefinition(
     label: "Bedside Bulb",
     integrationId: "bed-bulb",
     type: IntegrationUiType.button,
@@ -21,7 +21,26 @@ List<dynamic> kDashboardConfig = [
         "data": "true",
       };
     ''',
-  ),
+  ),IntegrationUiDefinition(
+    label: "Desk Bulb",
+    integrationId: "desk-bulb",
+    type: IntegrationUiType.button,
+    evaluatorScript: '''
+      var lightState = props['/lightState'];
+      var value = lightState['on_off'] == 1;
+      return {
+        "text": value ? "Turn Off" : "Turn On",
+        "icon": value ? "lightbulb" : "lightbulb_outlined",
+        "value": value,
+      };
+    ''',
+    outputTransformer: '''
+      return {
+        "path": "/\${integrationId}/power/toggle",
+        "data": "true",
+      };
+    ''',
+  ),],
   [IntegrationUiDefinition(
     label: "Bed Temperature",
     integrationId: "bed-bulb",
@@ -45,6 +64,45 @@ List<dynamic> kDashboardConfig = [
   IntegrationUiDefinition(
     label: "Bed Brightness",
     integrationId: "bed-bulb",
+    type: IntegrationUiType.slider,
+    evaluatorScript: '''
+      var lightState = props['/lightState'];
+      return {
+        "value": lightState['brightness'],
+        "min": 0,
+        "max": 100,
+      };
+    ''',
+    outputTransformer: '''
+      return {
+        "path": "/\${integrationId}/light/brightness",
+        "data": props["value"].toString(),
+      };
+    ''',
+    // dataPath: "/light/temperature"
+  ),IntegrationUiDefinition(
+    label: "Desk Temperature",
+    integrationId: "desk-bulb",
+    type: IntegrationUiType.slider,
+    evaluatorScript: '''
+      var lightState = props['/lightState'];
+      var temperatureRange = props['/temperatureRange'];
+      return {
+        "value": lightState['color_temp'],
+        "min": temperatureRange['min'],
+        "max": temperatureRange['max'],
+      };
+    ''',
+    outputTransformer: '''
+      return {
+        "path": "/\${integrationId}/light/temperature",
+        "data": props["value"].toString(),
+      };
+    ''',
+  ),
+  IntegrationUiDefinition(
+    label: "Desk Brightness",
+    integrationId: "desk-bulb",
     type: IntegrationUiType.slider,
     evaluatorScript: '''
       var lightState = props['/lightState'];

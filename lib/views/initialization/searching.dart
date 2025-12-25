@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:iot_app/controllers/preferences.dart';
 import 'package:iot_app/views/initialization/connecting.dart';
 import '../../controllers/mdns.dart';
 import '../../controllers/orchestrator.dart';
@@ -12,8 +13,11 @@ class SearchingView extends StatelessWidget {
     ColorScheme colors = Theme.of(context).colorScheme;
 
     // So we don't spam queries when we rebuild
-    if(!controller.searching)
+    if(!controller.searching){
       controller.findServices();
+      Get.find<PreferencesController>().cachedConnectionString.value = "";
+      Get.find<OrchestratorController>().connectionState.value = "";
+    }
 
     return Scaffold(
       body: Container(

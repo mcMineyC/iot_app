@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iot_app/utils/constants.dart';
-import '../views/integrationComponents/generics.dart';
+import 'components/generics.dart';
 import "../utils/snackbar.dart";
 
 import 'components/button.dart';

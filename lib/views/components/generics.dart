@@ -1,8 +1,8 @@
 import "package:flutter/material.dart";
 import "package:freezed_annotation/freezed_annotation.dart";
 
-import "../components/button.dart";
-import "../components/slider.dart";
+import "button.dart";
+import "slider.dart";
 
 part 'generics.freezed.dart';
 part 'generics.g.dart';
@@ -35,9 +35,12 @@ class SplitWidget extends StatelessWidget {
   SplitWidget({required this.definitions, super.key});
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: definitions.map((def) => UiDefinitionToWidget(def)).toList(),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: definitions.map((def) => UiDefinitionToWidget(def)).toList(),
+      ),
     );
   }
 }
