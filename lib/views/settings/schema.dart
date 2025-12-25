@@ -1,3 +1,5 @@
+import "dart:convert";
+
 import "package:flutter/material.dart";
 import "package:get/get.dart";
 
@@ -29,7 +31,33 @@ class IntegrationSchemaView extends StatelessWidget {
           return ListTile(
             title: Text(schema.path),
             subtitle: Text("Type: ${schema.type}\nFetchable: ${schema.fetchable}"),
-            trailing: schema.type != "command" ? null : IconButton(
+            trailing: 
+            schema.type == "data" ? IconButton(
+              icon: Icon(Icons.info_outline_rounded),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+                      title: Text(schema.path),
+                      content: Obx(() => Text(
+                        orchestratorController.orchestratorState[integrationKey] != null ?
+                        "Current Data: ${JsonEncoder.withIndent('  ').convert(orchestratorController.orchestratorState[integrationKey]![schema.path] ?? "{}")}" :
+                        "No data received yet.",
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                      )),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(null),
+                          child: Text("Close"),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }) :
+              IconButton( // Command type
               icon: Icon(Icons.send_rounded),
               onPressed: () {
                 showDialog(
