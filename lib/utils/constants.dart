@@ -1,6 +1,6 @@
 import '../views/integrationComponents/generics.dart';
 
-String kVersionString = "0.0.3.0";
+String kVersionString = "0.0.4.0";
 List<IntegrationUiDefinition> kDashboardConfig = [
   IntegrationUiDefinition(
     label: "Bedside Bulb",
