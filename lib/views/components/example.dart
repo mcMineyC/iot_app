@@ -8,13 +8,13 @@ import "../../utils/icon_map.dart";
 import "../integrationComponents/generics.dart";
 import "../../utils/snackbar.dart";
 
-class IntegrationButton extends StatefulWidget {
+class integrationComponent extends StatefulWidget {
   final String label;
   final String integrationId;
   final String evaluatorScript;
   final String outputTransformer;
 
-  const IntegrationButton({
+  const integrationComponent({
     Key? key,
     required this.label,
     required this.integrationId,
@@ -23,17 +23,17 @@ class IntegrationButton extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _IntegrationButtonState createState() => _IntegrationButtonState();
+  _integrationComponentState createState() => _integrationComponentState();
 }
 
-class _IntegrationButtonState extends State<IntegrationButton> {
+class _integrationComponentState extends State<integrationComponent> {
   late final OrchestratorController orchestrator;
   late final EvalWrapper hetu;
   bool online = false;
   bool enabled = false;
-  String icon = "handshake_rounded";
-  String text = "Execute";
   bool setupChangeListener = false;
+
+  // Add additional properties here to be filled by the evaluator
 
   void updateIntegrationState() {
     if (!orchestrator.orchestratorState.containsKey(widget.integrationId))
@@ -48,8 +48,7 @@ class _IntegrationButtonState extends State<IntegrationButton> {
       WidgetsBinding.instance.addPostFrameCallback(
         (_) => setState(() {
           enabled = true;
-          icon = result['icon'] ?? "handshake_rounded";
-          text = result['text'] ?? widget.label;
+          // Fill widget properties from result here
         }),
       );
     } catch (e) {
@@ -78,23 +77,23 @@ class _IntegrationButtonState extends State<IntegrationButton> {
   }
 
   void updateOnlineStatus() {
-    print(
-      "\n\n\n\tChecking online status for integration ${widget.integrationId}",
-    );
+    // print(
+      // "\n\n\n\tChecking online status for integration ${widget.integrationId}",
+    // );
     if (!orchestrator.integrationStatus.containsKey(widget.integrationId)) {
-      print("\t------> Integration status not found!");
+      // print("\t------> Integration status not found!");
       return;
     }
     IntegrationStatus status =
         orchestrator.integrationStatus[widget.integrationId]!;
     if (status.status == "running") {
       setState(() {
-        print("\t-----> Integration ${widget.integrationId} is online");
+        // print("\t-----> Integration ${widget.integrationId} is online");
         online = true;
       });
     } else {
       setState(() {
-        print("\t-----> Integration ${widget.integrationId} is offline");
+        // print("\t-----> Integration ${widget.integrationId} is offline");
         online = false;
       });
     }
@@ -105,10 +104,10 @@ class _IntegrationButtonState extends State<IntegrationButton> {
     super.initState();
     orchestrator = Get.find<OrchestratorController>();
     hetu = Get.find<EvalWrapper>();
-    ever(orchestrator.integrationStatus, (_) => updateOnlineStatus());
-    ever(orchestrator.haveIntegrationData, (_) => checkForIntegrationData());
-    checkForIntegrationData();
-    updateOnlineStatus();
+    ever(orchestrator.integrationStatus, (_) => updateOnlineStatus()); // Watch for integration to be online/offline
+    ever(orchestrator.haveIntegrationData, (_) => checkForIntegrationData()); // Watch for us to have integration data
+    checkForIntegrationData(); // Immediate check for data
+    updateOnlineStatus(); // Immediate check for online
   }
 
   @override
@@ -123,11 +122,12 @@ class _IntegrationButtonState extends State<IntegrationButton> {
                 hetu.executeTransformer(
                   widget.outputTransformer,
                   widget.integrationId,
-                  {"value": true}, // For button we don't have state to convey
+                  {"value": true}, // Pass any state from the widget here
                 );
               },
-        label: Text(text),
-        icon: Icon(iconMap[icon]),
+        label: const Text("Execute"),
+        // label: Text(text), // Example of additional property usage
+        icon: Icon(iconMap["handshake_rounded"]), // Looks up icon from iconMap in icon_map.dart
       ),
     );
   }

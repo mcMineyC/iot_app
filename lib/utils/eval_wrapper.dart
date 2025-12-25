@@ -4,7 +4,7 @@ import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:iot_app/controllers/orchestrator.dart';
 
-class HetuWrapper {
+class EvalWrapper {
   final OrchestratorController _orchestrator =
       Get.find<OrchestratorController>();
 

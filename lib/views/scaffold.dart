@@ -34,11 +34,15 @@ class ScaffoldWidget extends StatelessWidget {
             case 1:
               Get.toNamed('/integrationList');
               break;
+            case 2:
+              Get.toNamed('/settings');
+              break;
           }
         },
         selectedIndex: switch (Get.routing.current) {  
           '/home' => 0,
           '/integrationList' => 1,
+          '/settings' => 2,
           _ => null,
         },
         children: [
@@ -55,6 +59,10 @@ class ScaffoldWidget extends StatelessWidget {
           NavigationDrawerDestination(
             icon: Icon(Icons.info_outline_rounded),
             label: Text("Integration Status"),
+          ),
+          NavigationDrawerDestination(
+            icon: Icon(Icons.settings_rounded),
+            label: Text("Settings"),
           ),
           // ListTile(
           //   leading: Icon(Icons.settings, color: colors.onSurface),

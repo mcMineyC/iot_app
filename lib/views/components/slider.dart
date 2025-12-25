@@ -3,7 +3,7 @@ import "package:get/get.dart";
 import "package:iot_app/controllers/orchestrator.dart";
 import "package:iot_app/models/orchestrator_integration_status.dart";
 
-import "../../utils/hetu_wrapper.dart";
+import "../../utils/eval_wrapper.dart";
 import "../integrationComponents/generics.dart";
 import "../../utils/snackbar.dart";
 
@@ -44,7 +44,7 @@ class IntegrationSlider extends StatefulWidget {
 
 class _IntegrationSliderState extends State<IntegrationSlider> {
   late final OrchestratorController orchestrator;
-  late final HetuWrapper hetu;
+  late final EvalWrapper hetu;
   int min = 0;
   int max = 100;
   int value = 0;
@@ -109,7 +109,7 @@ class _IntegrationSliderState extends State<IntegrationSlider> {
   void initState() {
     super.initState();
     orchestrator = Get.find<OrchestratorController>();
-    hetu = Get.find<HetuWrapper>();
+    hetu = Get.find<EvalWrapper>();
 
     ever(orchestrator.integrationStatus, (_) {
       updateOnlineStatus();

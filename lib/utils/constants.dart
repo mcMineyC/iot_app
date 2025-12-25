@@ -1,6 +1,6 @@
 import '../views/integrationComponents/generics.dart';
 
-String kVersionString = "0.0.4.0";
+String kVersionString = "0.0.5.0";
 List<dynamic> kDashboardConfig = [
   IntegrationUiDefinition(
     label: "Bedside Bulb",
@@ -10,6 +10,8 @@ List<dynamic> kDashboardConfig = [
       var lightState = props['/lightState'];
       var value = lightState['on_off'] == 1;
       return {
+        "text": value ? "Turn Off" : "Turn On",
+        "icon": value ? "lightbulb" : "lightbulb_outlined",
         "value": value,
       };
     ''',
@@ -19,7 +21,6 @@ List<dynamic> kDashboardConfig = [
         "data": "true",
       };
     ''',
-    // dataPath: "/power/toggle"
   ),
   [IntegrationUiDefinition(
     label: "Bed Temperature",
@@ -65,11 +66,12 @@ List<dynamic> kDashboardConfig = [
     label: "Broom Closet Ending",
     integrationId: "broom-closet-ending",
     type: IntegrationUiType.button,
-    // dataPath: "/power/toggle"
     evaluatorScript: '''
       var lightState = props['/lightState'];
       var value = lightState['on_off'] == 1;
       return {
+        "text": value ? "Turn Off" : "Turn On",
+        "icon": value ? "lightbulb" : "lightbulb_outlined",
         "value": value,
       };
     ''',
