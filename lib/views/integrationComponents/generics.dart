@@ -1,6 +1,9 @@
 import "package:flutter/material.dart";
 import "package:freezed_annotation/freezed_annotation.dart";
 
+import "../components/button.dart";
+import "../components/slider.dart";
+
 part 'generics.freezed.dart';
 part 'generics.g.dart';
 
@@ -10,9 +13,9 @@ abstract class IntegrationUiDefinition with _$IntegrationUiDefinition {
     required String label,
     required String integrationId,
     required IntegrationUiType type,
-    required String dataPath,
-    String? evaluatorScript,
-    String? outputTransformer,
+    // required String dataPath,
+    required String evaluatorScript,
+    required String outputTransformer,
 
   }) = _IntegrationUiDefinition;
   factory IntegrationUiDefinition.fromJson(Map<String, dynamic> json) => _$IntegrationUiDefinitionFromJson(json);
@@ -27,6 +30,17 @@ enum IntegrationUiType{
   // custom
 }
 
+class SplitWidget extends StatelessWidget {
+  final List<IntegrationUiDefinition> definitions;
+  SplitWidget({required this.definitions, super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: definitions.map((def) => UiDefinitionToWidget(def)).toList(),
+    );
+  }
+}
 
 class GenericIntegrationComponent extends StatelessWidget {
   final String title;
@@ -85,5 +99,32 @@ class GenericIntegrationComponent extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+Widget UiDefinitionToWidget(dynamic definition) {
+  if (definition is IntegrationUiDefinition) {
+    switch (definition.type) {
+      case IntegrationUiType.button:
+        return IntegrationButton(
+          label: definition.label,
+            integrationId: definition.integrationId,
+            evaluatorScript: definition.evaluatorScript,
+            outputTransformer: definition.outputTransformer,
+          );
+        case IntegrationUiType.slider:
+          return IntegrationSlider(
+            label: definition.label,
+            integrationId: definition.integrationId,
+            evaluatorScript: definition.evaluatorScript,
+            outputTransformer: definition.outputTransformer,
+          );
+        default:
+          return SizedBox.shrink(); // Placeholder for unsupported types
+    }
+  }else if (definition is List<IntegrationUiDefinition>) {
+    return SplitWidget(definitions: definition); // It's a list instead of a single definition
+  } else {
+    return SizedBox.shrink(); // Placeholder for unsupported types
   }
 }

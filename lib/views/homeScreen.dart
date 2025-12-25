@@ -19,23 +19,7 @@ class Homescreen extends StatelessWidget {
     return Center(
       child: Obx(() => !controller.connected.value ? Text("Not connected to Orchestrator",style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: colors.onErrorContainer))
         : ListView(
-          children: kDashboardConfig.map((e) => switch(e.type){
-            IntegrationUiType.button => IntegrationButton(
-              label: e.label,
-              integrationId: e.integrationId,
-              actionPath: e.dataPath,
-              evaluatorScript: e.evaluatorScript,
-              outputTransformer: e.outputTransformer,
-            ),
-            IntegrationUiType.slider => IntegrationSlider(
-              label: e.label,
-              integrationId: e.integrationId,
-              actionPath: e.dataPath,
-              evaluatorScript: e.evaluatorScript,
-              outputTransformer: e.outputTransformer,
-            ),
-            _ => SizedBox.shrink(),
-          }).toList(),
+          children: kDashboardConfig.map((e) => UiDefinitionToWidget(e)).toList(),
           // children: [
           //   GenericIntegrationComponent(
           //     title: "Hello World",

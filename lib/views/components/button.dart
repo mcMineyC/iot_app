@@ -3,23 +3,22 @@ import "package:get/get.dart";
 import "package:iot_app/controllers/orchestrator.dart";
 
 import "../../models/orchestrator_integration_status.dart";
+import "../../utils/hetu_wrapper.dart";
 import "../integrationComponents/generics.dart";
 import "../../utils/snackbar.dart";
 
 class IntegrationButton extends StatefulWidget {
   final String label;
   final String integrationId;
-  final String actionPath;
   final String? evaluatorScript;
-  final String? outputTransformer;
+  final String outputTransformer;
 
   const IntegrationButton({
     Key? key,
     required this.label,
     required this.integrationId,
-    required this.actionPath,
     this.evaluatorScript,
-    this.outputTransformer,
+    required this.outputTransformer,
   }) : super(key: key);
 
   @override
@@ -28,6 +27,7 @@ class IntegrationButton extends StatefulWidget {
 
 class _IntegrationButtonState extends State<IntegrationButton> {
   late final OrchestratorController orchestrator;
+  late final HetuWrapper hetu;
   bool online = false;
 
   void updateOnlineStatus(){
@@ -54,7 +54,7 @@ class _IntegrationButtonState extends State<IntegrationButton> {
   void initState() {
     super.initState();
     orchestrator = Get.find<OrchestratorController>();
-    
+    hetu = Get.find<HetuWrapper>();
     ever(orchestrator.integrationStatus, (_) => updateOnlineStatus());
     updateOnlineStatus();
   }
@@ -66,8 +66,9 @@ class _IntegrationButtonState extends State<IntegrationButton> {
       title: widget.label,
       child: FilledButton.tonalIcon(
         onPressed: () {
-          context.showSnackbar("Hello World!");
-          orchestrator.sendMessage('/${widget.integrationId}${widget.actionPath}', '');
+          hetu.executeTransformer(widget.outputTransformer, widget.integrationId, {"value": true});
+          // context.showSnackbar("Hello World!");
+          // orchestrator.sendMessage('/${widget.integrationId}${widget.actionPath}', '');
         },
         label: Text(widget.label),
         icon: const Icon(Icons.handshake_rounded),

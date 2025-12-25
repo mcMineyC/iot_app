@@ -26,18 +26,18 @@ import "dart:convert";
 class IntegrationSlider extends StatefulWidget {
   final String label;
   final String integrationId;
-  final String actionPath;
-  final String? evaluatorScript;
-  final String? outputTransformer;
+  // final String actionPath;
+  final String evaluatorScript;
+  final String outputTransformer;
   final int debounceDelay = 300;
 
   IntegrationSlider({
     Key? key,
     required this.label,
     required this.integrationId,
-    required this.actionPath,
-    this.evaluatorScript,
-    this.outputTransformer,
+    // required this.actionPath,
+    required this.evaluatorScript,
+    required this.outputTransformer,
   }) : super(key: key);
 
   @override
@@ -85,21 +85,13 @@ class _IntegrationSliderState extends State<IntegrationSlider> {
     print("HETU EVALUATOR\n\n\n");
     try {
       var result = hetu.executeEvaluator(
-        '''
-      fun evaluate(props) {
-        return {
-          "value": props["/lightState"]["color_temp"],
-          // "min": 0,
-          // "max": 100,
-          "min": props["/temperatureRange"]["min"],
-          "max": props["/temperatureRange"]["max"],
-        }
-      }
-    ''', state as Map<String, dynamic>);
+        widget.evaluatorScript, widget.integrationId, state as Map<String, dynamic>);
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {min = result["min"]; max = result["max"]; value = result["value"]; _value = value.toDouble(); enabled = true;}));
     
     } catch (e) {
-      context.showSnackbar("Error in evaluator script: "+e.toString());
+      print("Error in evaluator script for integration ${widget.integrationId}: "+e.toString());
+      // rethrow;
+      WidgetsBinding.instance.addPostFrameCallback((_) {context.showSnackbar( "Error in evaluator script for integration ${widget.integrationId}: "+e.toString());});
       return;
     }
     // var state = jsonDecode(orchestrator.orchestratorState[widget.integrationId]!["/lightState"]);
@@ -149,17 +141,18 @@ class _IntegrationSliderState extends State<IntegrationSlider> {
 
     _debounceTimer?.cancel();
     _debounceTimer = Timer(Duration(milliseconds: widget.debounceDelay), () {
-      try {
-        // Map<String, dynamic> temp = jsonDecode(orchestrator.orchestratorState[widget.integrationId]!["/temperatureRange"]);
-        orchestrator.sendMessage(
-          "/${widget.integrationId}${widget.actionPath}",
-          _value.toInt().toString(),
-          // lerpDouble(temp["min"] ?? 0, temp["max"] ?? 100, value)!.toInt().toString()
-        );
-      } catch (e) {
-        rethrow;
-        context.showSnackbar("Error: "+e.toString());
-      }
+      hetu.executeTransformer(widget.outputTransformer, widget.integrationId, {"min": min, "max": max, "value": _value.toInt()});
+      // try {
+      //   Map<String, dynamic> temp = jsonDecode(orchestrator.orchestratorState[widget.integrationId]!["/temperatureRange"]);
+      //   orchestrator.sendMessage(
+      //     "/${widget.integrationId}${widget.actionPath}",
+      //     _value.toInt().toString(),
+      //     lerpDouble(temp["min"] ?? 0, temp["max"] ?? 100, value)!.toInt().toString()
+      //   );
+      // } catch (e) {
+      //   rethrow;
+      //   context.showSnackbar("Error: "+e.toString());
+      // }
     });
   }
 
