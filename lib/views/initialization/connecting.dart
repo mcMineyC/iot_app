@@ -38,7 +38,7 @@ class ConnectingView extends StatelessWidget {
                     Text("Connecting", style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: colors.onPrimaryContainer)),
                   ],
                 );
-              } else if(controller.connectionState.value == "error"){
+              } else if(controller.connectionState.value.startsWith("error")){
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -48,7 +48,7 @@ class ConnectingView extends StatelessWidget {
                     SizedBox(height: 8),
                     Text(controller.connectionError.value, style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: colors.onPrimaryContainer)),
                     // SizedBox(height: 8),
-                    Row(
+                    if(controller.connectionState.value == "errorFinal") Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         FilledButton.tonalIcon(

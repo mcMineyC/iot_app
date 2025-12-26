@@ -8,13 +8,13 @@ import "../../utils/icon_map.dart";
 import "generics.dart";
 import "../../utils/snackbar.dart";
 
-class integrationComponent extends StatefulWidget {
+class IntegrationComponent extends StatefulWidget {
   final String label;
   final String integrationId;
   final String evaluatorScript;
   final String outputTransformer;
 
-  const integrationComponent({
+  const IntegrationComponent({
     Key? key,
     required this.label,
     required this.integrationId,
@@ -23,15 +23,16 @@ class integrationComponent extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _integrationComponentState createState() => _integrationComponentState();
+  _IntegrationComponentState createState() => _IntegrationComponentState();
 }
 
-class _integrationComponentState extends State<integrationComponent> {
+class _IntegrationComponentState extends State<IntegrationComponent> {
   late final OrchestratorController orchestrator;
   late final EvalWrapper hetu;
   bool online = false;
   bool enabled = false;
   bool setupChangeListener = false;
+  List<Worker> _subscriptions = [];
 
   // Add additional properties here to be filled by the evaluator
 
@@ -70,9 +71,9 @@ class _integrationComponentState extends State<integrationComponent> {
     if (!orchestrator.haveIntegrationData.containsKey(widget.integrationId))
       return;
     setupChangeListener = true;
-    ever(orchestrator.orchestratorState[widget.integrationId]!, (_) {
+    _subscriptions.add(ever(orchestrator.orchestratorState[widget.integrationId]!, (_) {
       updateIntegrationState();
-    });
+    }));
     updateIntegrationState();
   }
 
@@ -104,8 +105,8 @@ class _integrationComponentState extends State<integrationComponent> {
     super.initState();
     orchestrator = Get.find<OrchestratorController>();
     hetu = Get.find<EvalWrapper>();
-    ever(orchestrator.integrationStatus, (_) => updateOnlineStatus()); // Watch for integration to be online/offline
-    ever(orchestrator.haveIntegrationData, (_) => checkForIntegrationData()); // Watch for us to have integration data
+    _subscriptions.add(ever(orchestrator.integrationStatus, (_) => updateOnlineStatus())); // Watch for integration to be online/offline
+    _subscriptions.add(ever(orchestrator.haveIntegrationData, (_) => checkForIntegrationData())); // Watch for us to have integration data
     checkForIntegrationData(); // Immediate check for data
     updateOnlineStatus(); // Immediate check for online
   }
@@ -130,5 +131,13 @@ class _integrationComponentState extends State<integrationComponent> {
         icon: Icon(iconMap["handshake_rounded"]), // Looks up icon from iconMap in icon_map.dart
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    for (var subscription in _subscriptions) {
+      subscription.dispose();
+    }
+    super.dispose();
   }
 }

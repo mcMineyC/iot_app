@@ -16,7 +16,7 @@ class SearchingView extends StatelessWidget {
     if(!controller.searching){
       controller.findServices();
       Get.find<PreferencesController>().cachedConnectionString.value = "";
-      Get.find<OrchestratorController>().connectionState.value = "";
+      WidgetsBinding.instance.addPostFrameCallback((_) => Get.find<OrchestratorController>().connectionState.value = "");
     }
 
     return Scaffold(

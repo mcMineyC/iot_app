@@ -51,9 +51,10 @@ class _IntegrationSliderState extends State<IntegrationSlider> {
   Timer? _debounceTimer;
   double _value = 0;
   bool setupChangeListener = false;
-  bool changed = false;
   bool enabled = false;
   bool online = false;
+  
+  List<Worker> _subscriptions = [];
 
   void updateOnlineStatus(){
     print("\n\n\n\tChecking online status for integration ${widget.integrationId}");
@@ -100,9 +101,9 @@ class _IntegrationSliderState extends State<IntegrationSlider> {
     if(!orchestrator.haveIntegrationData.containsKey(widget.integrationId))
       return;
     setupChangeListener = true;
-    ever(orchestrator.orchestratorState[widget.integrationId]!, (_) {
+    _subscriptions.add(ever(orchestrator.orchestratorState[widget.integrationId]!, (_) {
       updateIntegrationState();
-    });
+    }));
     updateIntegrationState();
   }
   @override
@@ -111,12 +112,12 @@ class _IntegrationSliderState extends State<IntegrationSlider> {
     orchestrator = Get.find<OrchestratorController>();
     hetu = Get.find<EvalWrapper>();
 
-    ever(orchestrator.integrationStatus, (_) {
+    _subscriptions.add(ever(orchestrator.integrationStatus, (_) {
       updateOnlineStatus();
-    });
-    ever(orchestrator.haveIntegrationData, (_) {
+    }));
+    _subscriptions.add(ever(orchestrator.haveIntegrationData, (_) {
       checkForIntegrationData();
-    });
+    }));
 
     checkForIntegrationData();    
     
@@ -135,6 +136,9 @@ class _IntegrationSliderState extends State<IntegrationSlider> {
   @override
   void dispose() {
     _debounceTimer?.cancel();
+    for (var subscription in _subscriptions) {
+      subscription.dispose();
+    }
     super.dispose();
   }
 

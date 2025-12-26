@@ -5,7 +5,7 @@ import "settings/integrationList.dart";
 import '../../controllers/orchestrator.dart';
 
 class ScaffoldWidget extends StatelessWidget {
-  // final controller = Get.find<OrchestratorController>(); // May add disconnect support eventually
+  final controller = Get.find<OrchestratorController>(); // May add disconnect support eventually
 
   final Widget child;
   ScaffoldWidget({required this.child, super.key});
@@ -96,8 +96,23 @@ class ScaffoldWidget extends StatelessWidget {
       body: Container(
         color: colors.surface,
         padding: const EdgeInsets.all(8.0),
-        child: child,
-      ),
+        child: Obx(() => !controller.connected.value ? Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text("Not connected to Orchestrator",style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: colors.onErrorContainer)),
+              SizedBox(height: 16),
+              controller.connectionState == "errorFinal" ? OutlinedButton.icon(
+                onPressed: () {
+                  controller.reconnect();
+                },
+                icon: Icon(Icons.refresh_rounded),
+                label: Text("Reconnect"),
+              ) : SizedBox.shrink(),
+            ],
+          ),
+        ) : child,
+      )),
     );
   }
 }

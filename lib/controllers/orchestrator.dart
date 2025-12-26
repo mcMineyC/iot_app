@@ -12,17 +12,22 @@ import '../models/integrationschema.dart';
 import '../utils/route_matching.dart';
 
 class OrchestratorController extends GetxController {
-  final client = MqttServerClient('', 'iot_app_flutter');
+  final client = MqttServerClient('', '');
   var connected = false.obs;
   var connectionState = "".obs;
   var connectionError = "".obs;
   var hasConnected = false;
   bool tryingToConnect = false;
+  List<String> ignoredTopics = [];
 
-  RxMap<String, IntegrationStatus> integrationStatus = RxMap<String, IntegrationStatus>({});
-  RxMap<String, RxMap<String, dynamic>> orchestratorState = <String, RxMap<String, dynamic>>{}.obs;
-  RxMap<String, List<IntegrationSchema>> integrationSchemas = <String, List<IntegrationSchema>>{}.obs;
-  RxMap<String, IntegrationConfig> enabledIntegrations = <String, IntegrationConfig>{}.obs;
+  RxMap<String, IntegrationStatus> integrationStatus =
+      RxMap<String, IntegrationStatus>({});
+  RxMap<String, RxMap<String, dynamic>> orchestratorState =
+      <String, RxMap<String, dynamic>>{}.obs;
+  RxMap<String, List<IntegrationSchema>> integrationSchemas =
+      <String, List<IntegrationSchema>>{}.obs;
+  RxMap<String, IntegrationConfig> enabledIntegrations =
+      <String, IntegrationConfig>{}.obs;
   RxMap<String, bool> haveIntegrationData = <String, bool>{}.obs;
 
   @override
@@ -39,7 +44,7 @@ class OrchestratorController extends GetxController {
         connected.value = false;
       } else if (state == "waiting") {
         connected.value = false;
-      } else if (state == "error") {
+      } else if (state.startsWith("error")) {
         connected.value = false;
       } else if (state == "connecting") {
         connected.value = false;
@@ -54,24 +59,24 @@ class OrchestratorController extends GetxController {
     client.logging(on: false);
     client.keepAlivePeriod = 20;
     client.onDisconnected = () {
-      if(!hasConnected || tryingToConnect)
-        return;
+      if (!hasConnected || tryingToConnect) return;
       print('MQTT client disconnected');
       connectionState.value = "disconnected";
       _connect();
     };
     final connMess = MqttConnectMessage()
-      .withClientIdentifier('iot_app_flutter')
-      // .withWillTopic('/death') // If you set this you must set a will message
-      // .withWillMessage('IoT App Disconnected') // If you set this you must set a will topic
-      .startClean() // Non persistent session for testing
-      .withWillQos(MqttQos.atLeastOnce);
+        .withClientIdentifier('iot_app_flutter_'+DateTime.now().millisecondsSinceEpoch.toString())
+        // .withWillTopic('/death') // If you set this you must set a will message
+        // .withWillMessage('IoT App Disconnected') // If you set this you must set a will topic
+        .startClean() // Non persistent session for testing
+        .withWillQos(MqttQos.atLeastOnce);
     client.connectionMessage = connMess;
     // And finally, connect!
     // Moved to line 54, 90
   }
 
   Future<void> onConnect() async {
+    tryingToConnect = false;
     client.updates!.listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
       handleClientUpdates(c);
     });
@@ -79,7 +84,9 @@ class OrchestratorController extends GetxController {
     sendMessage("/orchestrator/getdata/fullState", "");
     sendMessage("/orchestrator/getdata/enabledIntegrations", "");
   }
-
+  Future<void> reconnect() async {
+    await _connect();
+  }
   Future<bool> connect(String connectionString) async {
     tryingToConnect = true;
     String ip = connectionString.split(":")[0];
@@ -110,16 +117,18 @@ class OrchestratorController extends GetxController {
   void handleMessage(String topic, String payload) {
     print('::MESSAGE:: topic is <$topic>, payload is <-- $payload -->');
     // print('Received message on topic: $topic with payload: $payload');
-    if(topic == "/orchestrator/status"){
+    if (topic == "/orchestrator/status") {
       Map<String, dynamic> map = jsonDecode(payload);
       List<IntegrationStatus> statuses = [];
       map.forEach((key, value) {
         value["id"] = key;
-        integrationStatus[key] = IntegrationStatus.fromJson(value as Map<String, dynamic>);
+        integrationStatus[key] = IntegrationStatus.fromJson(
+          value as Map<String, dynamic>,
+        );
       });
       // integrationStatus.value = statuses;
       return;
-    }else if(topic.startsWith("/orchestrator/status/")){
+    } else if (topic.startsWith("/orchestrator/status/")) {
       String integrationId = topic.split("/").last;
       Map<String, dynamic> map = jsonDecode(payload);
       map["id"] = integrationId;
@@ -132,63 +141,78 @@ class OrchestratorController extends GetxController {
       //   integrationStatus.add(updatedStatus);
       // }
       return;
-    }else if(topic == "/orchestrator/state"){
+    } else if (topic == "/orchestrator/state") {
       print("PAYLOAD: $payload");
       Map<String, dynamic> map = jsonDecode(payload);
       print("Updating orchestrator state with keys: ${map.keys.toList()}");
       map.forEach((key, value) {
         final Map<String, dynamic> rawMap = value as Map<String, dynamic>;
-        final parsed = <String, dynamic>{};
-        rawMap.forEach((k, v) {
-          if (v is String) {
-            try {
-              final decoded = jsonDecode(v);
-              parsed[k] = decoded;
-            } catch (_) {
-              parsed[k] = v;
-            }
-          } else {
-            parsed[k] = v;
-          }
-        });
+        final parsed = deserializeValue(rawMap);
         orchestratorState[key] = RxMap<String, dynamic>.from(parsed);
         haveIntegrationData[key] = true;
       });
       return;
-    }else if(topic == "/orchestrator/schemas"){
+    } else if (topic == "/orchestrator/schemas") {
       Map<String, List<IntegrationSchema>> schemas = {};
       Map<String, dynamic> map = jsonDecode(payload);
+      ignoredTopics = [];
       map.forEach((key, value) {
         List<IntegrationSchema> schemaList = [];
-        for(var item in value as List){
-          schemaList.add(IntegrationSchema.fromJson(item as Map<String, dynamic>));
+        for (var item in value as List) {
+          schemaList.add(
+            IntegrationSchema.fromJson(item as Map<String, dynamic>),
+          );
+          if (item['type'] != "data") {
+            print("Ignoring topic /$key${item['path']} due to type ${item['type']}");
+            ignoredTopics.add("/$key/${item['path']}");
+          }
         }
         schemas[key] = schemaList;
       });
-      print("Received integration schemas for keys: ${schemas}");
+      print("Received integration schemas for keys: ${schemas.keys.toList()}");
       integrationSchemas.value = schemas;
-    }else if(topic == "/orchestrator/enabledIntegrations"){
+    } else if (topic == "/orchestrator/enabledIntegrations") {
       Map<String, dynamic> map = jsonDecode(payload);
       Map<String, IntegrationConfig> enabledIntegrations = {};
       map.forEach((key, value) {
-        enabledIntegrations[key] = IntegrationConfig.fromJson(value as Map<String, dynamic?>);
+        enabledIntegrations[key] = IntegrationConfig.fromJson(
+          value as Map<String, dynamic?>,
+        );
       });
       this.enabledIntegrations.value = enabledIntegrations;
       // print("Enabled integrations: $enabledIntegrations");
+    } else if (!ignoredTopics.contains(topic)) {
+      print("Processing topic $topic");
+      var integrationId = topic.split("/")[1];
+      var path = topic.substring(integrationId.length + 1);
+      print(
+          "Updating orchestrator state for integration $integrationId at path $path");
+      if (!orchestratorState.containsKey(integrationId)) {
+        orchestratorState[integrationId] = RxMap<String, dynamic>();
+      }
+
+
+      final deserializedValue = deserializeValue(payload);
+      orchestratorState[integrationId]![path] = deserializedValue;
+      haveIntegrationData[integrationId] = true;
     }
   }
 
   void startIntegration(String integrationId) {
     sendMessage("/orchestrator/integration/start", integrationId);
   }
+
   void stopIntegration(String integrationId) {
     sendMessage("/orchestrator/integration/$integrationId/stop", "");
   }
 
   // Connection logic with retry mechanism
-  Future<void> _connect({int maxRetries = 3, Duration retryDelay = const Duration(seconds: 2)}) async {
+  Future<void> _connect({
+    int maxRetries = 3,
+    Duration retryDelay = const Duration(seconds: 2),
+  }) async {
     tryingToConnect = true;
-    if(connectionState.value == "connected"){
+    if (connectionState.value == "connected") {
       client.disconnect();
       connectionState.value = "disconnected";
     }
@@ -204,13 +228,15 @@ class OrchestratorController extends GetxController {
         if (client.connectionStatus?.state == MqttConnectionState.connected) {
           print('MQTT client connected');
           connectionState.value = "connected";
-          
+
           // Set up subscriptions and such
           print('MQTT client connection process completed');
           await onConnect();
           return;
         } else {
-          print('ERROR MQTT client connection failed - status is ${client.connectionStatus}');
+          print(
+            'ERROR MQTT client connection failed - status is ${client.connectionStatus}',
+          );
           client.disconnect();
         }
       } on NoConnectionException catch (e) {
@@ -232,10 +258,32 @@ class OrchestratorController extends GetxController {
         await Future.delayed(retryDelay);
       } else {
         print('Max retry attempts reached. Giving up.');
+        connectionState.value = "errorFinal";
         connected.value = false;
         tryingToConnect = false;
         return;
       }
     }
   }
+
+      // Recursively deserialize nested JSON strings
+      dynamic deserializeValue(dynamic value) {
+        if (value is String) {
+          try {
+            final decoded = jsonDecode(value);
+            return deserializeValue(decoded); // Recursively deserialize
+          } catch (_) {
+            return value;
+          }
+        } else if (value is Map) {
+          final parsed = <String, dynamic>{};
+          (value as Map<String, dynamic>).forEach((k, v) {
+            parsed[k] = deserializeValue(v);
+          });
+          return parsed;
+        } else if (value is List) {
+          return value.map((item) => deserializeValue(item)).toList();
+        }
+        return value;
+      }
 }

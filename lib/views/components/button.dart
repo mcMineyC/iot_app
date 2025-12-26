@@ -34,6 +34,7 @@ class _IntegrationButtonState extends State<IntegrationButton> {
   String icon = "handshake_rounded";
   String text = "Execute";
   bool setupChangeListener = false;
+  List<Worker> _subscriptions = [];
 
   void updateIntegrationState() {
     if (!orchestrator.orchestratorState.containsKey(widget.integrationId))
@@ -71,9 +72,9 @@ class _IntegrationButtonState extends State<IntegrationButton> {
     if (!orchestrator.haveIntegrationData.containsKey(widget.integrationId))
       return;
     setupChangeListener = true;
-    ever(orchestrator.orchestratorState[widget.integrationId]!, (_) {
+    _subscriptions.add(ever(orchestrator.orchestratorState[widget.integrationId]!, (_) {
       updateIntegrationState();
-    });
+    }));
     updateIntegrationState();
   }
 
@@ -105,10 +106,18 @@ class _IntegrationButtonState extends State<IntegrationButton> {
     super.initState();
     orchestrator = Get.find<OrchestratorController>();
     hetu = Get.find<EvalWrapper>();
-    ever(orchestrator.integrationStatus, (_) => updateOnlineStatus());
-    ever(orchestrator.haveIntegrationData, (_) => checkForIntegrationData());
+    _subscriptions.add(ever(orchestrator.integrationStatus, (_) => updateOnlineStatus()));
+    _subscriptions.add(ever(orchestrator.haveIntegrationData, (_) => checkForIntegrationData()));
     checkForIntegrationData();
     updateOnlineStatus();
+  }
+
+  @override
+  void dispose() {
+    for (var subscription in _subscriptions) {
+      subscription.dispose();
+    }
+    super.dispose();
   }
 
   @override

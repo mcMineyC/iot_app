@@ -17,7 +17,20 @@ class Homescreen extends StatelessWidget {
     ColorScheme colors = Theme.of(context).colorScheme;
 
     return Center(
-      child: Obx(() => !controller.connected.value ? Text("Not connected to Orchestrator",style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: colors.onErrorContainer))
+      child: Obx(() => !controller.connected.value ? Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text("Not connected to Orchestrator",style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: colors.onErrorContainer)),
+          SizedBox(height: 16),
+          OutlinedButton.icon(
+            onPressed: () {
+              controller.reconnect();
+            },
+            icon: Icon(Icons.refresh_rounded),
+            label: Text("Reconnect"),
+          )
+        ],
+      )
         : ListView(
           children: kDashboardConfig.map((e) => UiDefinitionToWidget(e)).toList(),
           // children: [
