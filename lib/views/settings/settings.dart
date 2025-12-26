@@ -8,6 +8,7 @@ class SettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController dbconfController = TextEditingController();
     return ListView(
       children: [
         Card(
@@ -33,6 +34,45 @@ class SettingsView extends StatelessWidget {
 
               ),
           )
+        ),
+        Card(
+          elevation: 1,
+          child: ListTile(
+            leading: Icon(Icons.dashboard_rounded),
+            title: Text("Test dashboard json"),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton.outlined(
+                  onPressed: () {
+                    var conf = dbconfController.text;
+                    print("Deserializing dashboard config...");
+                    Get.find<PreferencesController>().dashboardConfigSerialized = conf;
+                    print("Dashboard config updated!");
+                    print(Get.find<PreferencesController>().dashboardConfiguration);
+                  },
+                  icon: Icon(Icons.save_rounded)
+                ),
+                IconButton.outlined(
+                    onPressed: () {
+                      print("Serializing dashboard config...");
+                      var dbConf = Get.find<PreferencesController>().dashboardConfigSerialized;
+                      // print(dbConf);
+                      dbconfController.text = dbConf;
+                    },
+                    icon: Icon(Icons.print_rounded),
+                  ),
+              ],
+            ),
+          )
+        ),
+        TextField(
+          controller: dbconfController,
+          maxLines: 100,
+          decoration: InputDecoration(
+            labelText: "Dashboard Config JSON",
+            border: OutlineInputBorder(),
+          ),
         )
       ],
     );

@@ -3,6 +3,7 @@ import "package:freezed_annotation/freezed_annotation.dart";
 
 import "button.dart";
 import "slider.dart";
+import "stateless_button.dart";
 
 part 'generics.freezed.dart';
 part 'generics.g.dart';
@@ -22,6 +23,7 @@ abstract class IntegrationUiDefinition with _$IntegrationUiDefinition {
 }
 enum IntegrationUiType{
   button,
+  statelessButton,
   slider,
   toggle,
   // textInput,
@@ -31,7 +33,7 @@ enum IntegrationUiType{
 }
 
 class SplitWidget extends StatelessWidget {
-  final List<IntegrationUiDefinition> definitions;
+  final List<dynamic> definitions;
   SplitWidget({required this.definitions, super.key});
   @override
   Widget build(BuildContext context) {
@@ -116,6 +118,13 @@ Widget UiDefinitionToWidget(dynamic definition) {
             evaluatorScript: definition.evaluatorScript,
             outputTransformer: definition.outputTransformer,
           );
+      case IntegrationUiType.statelessButton:
+        return IntegrationStatelessButton(
+          label: definition.label,
+            integrationId: definition.integrationId,
+            evaluatorScript: definition.evaluatorScript,
+            outputTransformer: definition.outputTransformer,
+          );
         case IntegrationUiType.slider:
           return IntegrationSlider(
             label: definition.label,
@@ -124,11 +133,14 @@ Widget UiDefinitionToWidget(dynamic definition) {
             outputTransformer: definition.outputTransformer,
           );
         default:
+          print("Unsupported IntegrationUiType: ${definition.type}");
           return SizedBox.shrink(); // Placeholder for unsupported types
     }
-  }else if (definition is List<IntegrationUiDefinition>) {
+  }else if (definition is List) {
     return SplitWidget(definitions: definition); // It's a list instead of a single definition
   } else {
+    print("Unknown definition type: ${definition.runtimeType}");
+    print(definition);
     return SizedBox.shrink(); // Placeholder for unsupported types
   }
 }

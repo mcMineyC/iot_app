@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iot_app/utils/constants.dart';
+import '../controllers/preferences.dart';
 import 'components/generics.dart';
 import "../utils/snackbar.dart";
 
@@ -11,6 +12,7 @@ import '../../controllers/orchestrator.dart';
 
 class Homescreen extends StatelessWidget {
   final controller = Get.find<OrchestratorController>();
+  final preferences = Get.find<PreferencesController>();
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +33,8 @@ class Homescreen extends StatelessWidget {
           )
         ],
       )
-        : ListView(
-          children: kDashboardConfig.map((e) => UiDefinitionToWidget(e)).toList(),
+        : Obx(() => ListView(
+          children: preferences.dashboardConfiguration.map((e) => UiDefinitionToWidget(e)).toList(),
           // children: [
           //   GenericIntegrationComponent(
           //     title: "Hello World",
@@ -44,7 +46,7 @@ class Homescreen extends StatelessWidget {
           //   )
           // ]
         )
-      ),
+      )),
     );
   }
 }

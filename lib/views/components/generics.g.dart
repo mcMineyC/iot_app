@@ -28,6 +28,7 @@ Map<String, dynamic> _$IntegrationUiDefinitionToJson(
 
 const _$IntegrationUiTypeEnumMap = {
   IntegrationUiType.button: 'button',
+  IntegrationUiType.statelessButton: 'statelessButton',
   IntegrationUiType.slider: 'slider',
   IntegrationUiType.toggle: 'toggle',
 };
