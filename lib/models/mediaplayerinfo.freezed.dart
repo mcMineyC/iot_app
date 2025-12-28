@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MediaPlayerInfo {
 
- String get title; String get album; String get artist; String get imageUrl; Duration get length; Duration get position; String? get id;
+ String get title; String get album; String get artist; String get imageUrl; Duration get length; String? get id;
 /// Create a copy of MediaPlayerInfo
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $MediaPlayerInfoCopyWith<MediaPlayerInfo> get copyWith => _$MediaPlayerInfoCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MediaPlayerInfo&&(identical(other.title, title) || other.title == title)&&(identical(other.album, album) || other.album == album)&&(identical(other.artist, artist) || other.artist == artist)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.length, length) || other.length == length)&&(identical(other.position, position) || other.position == position)&&(identical(other.id, id) || other.id == id));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MediaPlayerInfo&&(identical(other.title, title) || other.title == title)&&(identical(other.album, album) || other.album == album)&&(identical(other.artist, artist) || other.artist == artist)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.length, length) || other.length == length)&&(identical(other.id, id) || other.id == id));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,title,album,artist,imageUrl,length,position,id);
+int get hashCode => Object.hash(runtimeType,title,album,artist,imageUrl,length,id);
 
 @override
 String toString() {
-  return 'MediaPlayerInfo(title: $title, album: $album, artist: $artist, imageUrl: $imageUrl, length: $length, position: $position, id: $id)';
+  return 'MediaPlayerInfo(title: $title, album: $album, artist: $artist, imageUrl: $imageUrl, length: $length, id: $id)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $MediaPlayerInfoCopyWith<$Res>  {
   factory $MediaPlayerInfoCopyWith(MediaPlayerInfo value, $Res Function(MediaPlayerInfo) _then) = _$MediaPlayerInfoCopyWithImpl;
 @useResult
 $Res call({
- String title, String album, String artist, String imageUrl, Duration length, Duration position, String? id
+ String title, String album, String artist, String imageUrl, Duration length, String? id
 });
 
 
@@ -65,14 +65,13 @@ class _$MediaPlayerInfoCopyWithImpl<$Res>
 
 /// Create a copy of MediaPlayerInfo
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? album = null,Object? artist = null,Object? imageUrl = null,Object? length = null,Object? position = null,Object? id = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? album = null,Object? artist = null,Object? imageUrl = null,Object? length = null,Object? id = freezed,}) {
   return _then(_self.copyWith(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,album: null == album ? _self.album : album // ignore: cast_nullable_to_non_nullable
 as String,artist: null == artist ? _self.artist : artist // ignore: cast_nullable_to_non_nullable
 as String,imageUrl: null == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
 as String,length: null == length ? _self.length : length // ignore: cast_nullable_to_non_nullable
-as Duration,position: null == position ? _self.position : position // ignore: cast_nullable_to_non_nullable
 as Duration,id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
@@ -159,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title,  String album,  String artist,  String imageUrl,  Duration length,  Duration position,  String? id)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title,  String album,  String artist,  String imageUrl,  Duration length,  String? id)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MediaPlayerInfo() when $default != null:
-return $default(_that.title,_that.album,_that.artist,_that.imageUrl,_that.length,_that.position,_that.id);case _:
+return $default(_that.title,_that.album,_that.artist,_that.imageUrl,_that.length,_that.id);case _:
   return orElse();
 
 }
@@ -180,10 +179,10 @@ return $default(_that.title,_that.album,_that.artist,_that.imageUrl,_that.length
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title,  String album,  String artist,  String imageUrl,  Duration length,  Duration position,  String? id)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title,  String album,  String artist,  String imageUrl,  Duration length,  String? id)  $default,) {final _that = this;
 switch (_that) {
 case _MediaPlayerInfo():
-return $default(_that.title,_that.album,_that.artist,_that.imageUrl,_that.length,_that.position,_that.id);case _:
+return $default(_that.title,_that.album,_that.artist,_that.imageUrl,_that.length,_that.id);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +199,10 @@ return $default(_that.title,_that.album,_that.artist,_that.imageUrl,_that.length
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title,  String album,  String artist,  String imageUrl,  Duration length,  Duration position,  String? id)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title,  String album,  String artist,  String imageUrl,  Duration length,  String? id)?  $default,) {final _that = this;
 switch (_that) {
 case _MediaPlayerInfo() when $default != null:
-return $default(_that.title,_that.album,_that.artist,_that.imageUrl,_that.length,_that.position,_that.id);case _:
+return $default(_that.title,_that.album,_that.artist,_that.imageUrl,_that.length,_that.id);case _:
   return null;
 
 }
@@ -215,7 +214,7 @@ return $default(_that.title,_that.album,_that.artist,_that.imageUrl,_that.length
 @JsonSerializable()
 
 class _MediaPlayerInfo implements MediaPlayerInfo {
-   _MediaPlayerInfo({required this.title, required this.album, required this.artist, required this.imageUrl, required this.length, required this.position, this.id});
+   _MediaPlayerInfo({required this.title, required this.album, required this.artist, required this.imageUrl, required this.length, this.id});
   factory _MediaPlayerInfo.fromJson(Map<String, dynamic> json) => _$MediaPlayerInfoFromJson(json);
 
 @override final  String title;
@@ -223,7 +222,6 @@ class _MediaPlayerInfo implements MediaPlayerInfo {
 @override final  String artist;
 @override final  String imageUrl;
 @override final  Duration length;
-@override final  Duration position;
 @override final  String? id;
 
 /// Create a copy of MediaPlayerInfo
@@ -239,16 +237,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MediaPlayerInfo&&(identical(other.title, title) || other.title == title)&&(identical(other.album, album) || other.album == album)&&(identical(other.artist, artist) || other.artist == artist)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.length, length) || other.length == length)&&(identical(other.position, position) || other.position == position)&&(identical(other.id, id) || other.id == id));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MediaPlayerInfo&&(identical(other.title, title) || other.title == title)&&(identical(other.album, album) || other.album == album)&&(identical(other.artist, artist) || other.artist == artist)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.length, length) || other.length == length)&&(identical(other.id, id) || other.id == id));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,title,album,artist,imageUrl,length,position,id);
+int get hashCode => Object.hash(runtimeType,title,album,artist,imageUrl,length,id);
 
 @override
 String toString() {
-  return 'MediaPlayerInfo(title: $title, album: $album, artist: $artist, imageUrl: $imageUrl, length: $length, position: $position, id: $id)';
+  return 'MediaPlayerInfo(title: $title, album: $album, artist: $artist, imageUrl: $imageUrl, length: $length, id: $id)';
 }
 
 
@@ -259,7 +257,7 @@ abstract mixin class _$MediaPlayerInfoCopyWith<$Res> implements $MediaPlayerInfo
   factory _$MediaPlayerInfoCopyWith(_MediaPlayerInfo value, $Res Function(_MediaPlayerInfo) _then) = __$MediaPlayerInfoCopyWithImpl;
 @override @useResult
 $Res call({
- String title, String album, String artist, String imageUrl, Duration length, Duration position, String? id
+ String title, String album, String artist, String imageUrl, Duration length, String? id
 });
 
 
@@ -276,14 +274,13 @@ class __$MediaPlayerInfoCopyWithImpl<$Res>
 
 /// Create a copy of MediaPlayerInfo
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? album = null,Object? artist = null,Object? imageUrl = null,Object? length = null,Object? position = null,Object? id = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? album = null,Object? artist = null,Object? imageUrl = null,Object? length = null,Object? id = freezed,}) {
   return _then(_MediaPlayerInfo(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,album: null == album ? _self.album : album // ignore: cast_nullable_to_non_nullable
 as String,artist: null == artist ? _self.artist : artist // ignore: cast_nullable_to_non_nullable
 as String,imageUrl: null == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
 as String,length: null == length ? _self.length : length // ignore: cast_nullable_to_non_nullable
-as Duration,position: null == position ? _self.position : position // ignore: cast_nullable_to_non_nullable
 as Duration,id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,
   ));

@@ -12,10 +12,18 @@ abstract class MediaPlayerInfo with _$MediaPlayerInfo {
     required String artist,
     required String imageUrl,
     required Duration length,
-    required Duration position,
     String? id,
   }) = _MediaPlayerInfo;
 	
   factory MediaPlayerInfo.fromJson(Map<String, dynamic> json) =>
 			_$MediaPlayerInfoFromJson(json);
+
+  factory MediaPlayerInfo.empty() => MediaPlayerInfo(
+        title: "Not playing",
+        album: "",
+        artist: "",
+        imageUrl: "",
+        length: Duration.zero,
+        id: null,
+      );
 }

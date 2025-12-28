@@ -13,7 +13,6 @@ _MediaPlayerInfo _$MediaPlayerInfoFromJson(Map<String, dynamic> json) =>
       artist: json['artist'] as String,
       imageUrl: json['imageUrl'] as String,
       length: Duration(microseconds: (json['length'] as num).toInt()),
-      position: Duration(microseconds: (json['position'] as num).toInt()),
       id: json['id'] as String?,
     );
 
@@ -24,6 +23,5 @@ Map<String, dynamic> _$MediaPlayerInfoToJson(_MediaPlayerInfo instance) =>
       'artist': instance.artist,
       'imageUrl': instance.imageUrl,
       'length': instance.length.inMicroseconds,
-      'position': instance.position.inMicroseconds,
       'id': instance.id,
     };
