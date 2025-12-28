@@ -107,46 +107,51 @@ class _IntegrationMediaPlayerState extends State<IntegrationMediaPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Expanded(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final available = constraints.maxWidth.isFinite ? constraints.maxWidth : 360.0;
-              final width = available > 360.0 ? 360.0 : available;
-              return Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: SizedBox(
-                  width: width,
-                  child: AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: GenericIntegrationComponent(
-                      online: online,
-                      padding: EdgeInsets.all(0),
-                      title: widget.label,
-                      child: Stack(
-                        clipBehavior: Clip.antiAlias,
-                        fit: StackFit.expand,
-                        children: [
-                          FittedBox(
-                            fit: BoxFit.contain,
-                            child: Icon(
-                              Icons.music_note,
-                              color: Colors.grey.shade800,
-                              size: 100,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+    return LayoutBuilder(builder: (context, constraints) {
+      Widget player = ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: 360),
+        child: AspectRatio(
+          aspectRatio: 16 / 9,
+          child: GenericIntegrationComponent(
+            online: online,
+            padding: EdgeInsets.all(0),
+            title: widget.label,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                FittedBox(
+                  fit: BoxFit.contain,
+                  child: Icon(
+                    Icons.music_note,
+                    color: Colors.grey.shade800,
+                    size: 100,
                   ),
                 ),
-              );
-            },
+              ],
+            ),
           ),
         ),
-      ],
-    );
+      );
+
+      // If available width is less than 264, show a horizontal scroll with 320px child
+      if (constraints.maxWidth < 264) {
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: SizedBox(width: 320, child: player),
+        );
+      }
+
+      // Otherwise size the child to fit the parent but not exceed 360
+      double width = constraints.maxWidth;
+      if (width > 360) width = 360;
+
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(width: width, child: player),
+        ],
+      );
+    });
   }
 }
