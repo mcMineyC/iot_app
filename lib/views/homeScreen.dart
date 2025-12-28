@@ -21,6 +21,7 @@ class Homescreen extends StatelessWidget {
     return Center(
       child: Obx(() => !controller.connected.value ? Column(
         mainAxisSize: MainAxisSize.min,
+        // crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text("Not connected to Orchestrator",style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: colors.onErrorContainer)),
           SizedBox(height: 16),

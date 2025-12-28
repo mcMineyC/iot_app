@@ -20,7 +20,7 @@ class PreferencesController extends GetxController {
     if (sp.containsKey("dashboardConfiguration")) {
       dashboardConfigSerialized = await restoreKey("dashboardConfiguration"); // automatically deserialize config
     }else{
-      dashboardConfiguration.value = kDashboardConfig; // default config
+      dashboardConfigSerialized = kDashboardConfig; // default config
     }
     ready.value = true;
   }

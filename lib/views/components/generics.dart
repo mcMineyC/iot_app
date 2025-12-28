@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:freezed_annotation/freezed_annotation.dart";
 
 import "button.dart";
+import "media_player.dart";
 import "slider.dart";
 import "stateless_button.dart";
 
@@ -25,7 +26,8 @@ enum IntegrationUiType{
   button,
   statelessButton,
   slider,
-  toggle,
+  mediaPlayer,
+  // toggle,
   // textInput,
   // dropdown,
   // colorPicker,
@@ -51,8 +53,9 @@ class GenericIntegrationComponent extends StatelessWidget {
   final String title;
   final Widget child;
   final bool online;
+  final EdgeInsetsGeometry? padding;
 
-  GenericIntegrationComponent({required this.title, required this.child, required this.online, super.key});
+  GenericIntegrationComponent({required this.title, required this.child, required this.online, this.padding, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +68,7 @@ class GenericIntegrationComponent extends StatelessWidget {
           if (!online) Align(
             alignment: Alignment.topRight,
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: padding ?? const EdgeInsets.all(8.0),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -84,7 +87,7 @@ class GenericIntegrationComponent extends StatelessWidget {
               ),
             ),
           ),
-          Padding(
+          if (padding != EdgeInsets.all(0)) Padding(
             padding: const EdgeInsets.all(12.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -102,6 +105,7 @@ class GenericIntegrationComponent extends StatelessWidget {
               ],
             ),
           ),
+          if (padding == EdgeInsets.all(0)) child,
         ],
       ),
     );
@@ -131,6 +135,11 @@ Widget UiDefinitionToWidget(dynamic definition) {
             integrationId: definition.integrationId,
             evaluatorScript: definition.evaluatorScript,
             outputTransformer: definition.outputTransformer,
+          );
+        case IntegrationUiType.mediaPlayer:
+          return IntegrationMediaPlayer(
+            label: definition.label,
+            integrationId: definition.integrationId
           );
         default:
           print("Unsupported IntegrationUiType: ${definition.type}");

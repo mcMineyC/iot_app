@@ -1,143 +1,67 @@
 import '../views/components/generics.dart';
 
 String kVersionString = "0.0.6.7";
-List<dynamic> kDashboardConfig = [
-  [IntegrationUiDefinition(
-    label: "Bedside Bulb",
-    integrationId: "bed-bulb",
-    type: IntegrationUiType.button,
-    evaluatorScript: '''
-      var lightState = props['/lightState'];
-      var value = lightState['on_off'] == 1;
-      return {
-        "text": value ? "Turn Off" : "Turn On",
-        "icon": value ? "lightbulb" : "lightbulb_outlined",
-        "value": value,
-      };
-    ''',
-    outputTransformer: '''
-      return {
-        "path": "/\${integrationId}/power/toggle",
-        "data": "true",
-      };
-    ''',
-  ),IntegrationUiDefinition(
-    label: "Desk Bulb",
-    integrationId: "desk-bulb",
-    type: IntegrationUiType.button,
-    evaluatorScript: '''
-      var lightState = props['/lightState'];
-      var value = lightState['on_off'] == 1;
-      return {
-        "text": value ? "Turn Off" : "Turn On",
-        "icon": value ? "lightbulb" : "lightbulb_outlined",
-        "value": value,
-      };
-    ''',
-    outputTransformer: '''
-      return {
-        "path": "/\${integrationId}/power/toggle",
-        "data": "true",
-      };
-    ''',
-  ),],
-  [IntegrationUiDefinition(
-    label: "Bed Temperature",
-    integrationId: "bed-bulb",
-    type: IntegrationUiType.slider,
-    evaluatorScript: '''
-      var lightState = props['/lightState'];
-      var temperatureRange = props['/temperatureRange'];
-      return {
-        "value": lightState['color_temp'],
-        "min": temperatureRange['min'],
-        "max": temperatureRange['max'],
-      };
-    ''',
-    outputTransformer: '''
-      return {
-        "path": "/\${integrationId}/light/temperature",
-        "data": props["value"].toString(),
-      };
-    ''',
-  ),
-  IntegrationUiDefinition(
-    label: "Bed Brightness",
-    integrationId: "bed-bulb",
-    type: IntegrationUiType.slider,
-    evaluatorScript: '''
-      var lightState = props['/lightState'];
-      return {
-        "value": lightState['brightness'],
-        "min": 0,
-        "max": 100,
-      };
-    ''',
-    outputTransformer: '''
-      return {
-        "path": "/\${integrationId}/light/brightness",
-        "data": props["value"].toString(),
-      };
-    ''',
-    // dataPath: "/light/temperature"
-  ),IntegrationUiDefinition(
-    label: "Desk Temperature",
-    integrationId: "desk-bulb",
-    type: IntegrationUiType.slider,
-    evaluatorScript: '''
-      var lightState = props['/lightState'];
-      var temperatureRange = props['/temperatureRange'];
-      return {
-        "value": lightState['color_temp'],
-        "min": temperatureRange['min'],
-        "max": temperatureRange['max'],
-      };
-    ''',
-    outputTransformer: '''
-      return {
-        "path": "/\${integrationId}/light/temperature",
-        "data": props["value"].toString(),
-      };
-    ''',
-  ),
-  IntegrationUiDefinition(
-    label: "Desk Brightness",
-    integrationId: "desk-bulb",
-    type: IntegrationUiType.slider,
-    evaluatorScript: '''
-      var lightState = props['/lightState'];
-      return {
-        "value": lightState['brightness'],
-        "min": 0,
-        "max": 100,
-      };
-    ''',
-    outputTransformer: '''
-      return {
-        "path": "/\${integrationId}/light/brightness",
-        "data": props["value"].toString(),
-      };
-    ''',
-    // dataPath: "/light/temperature"
-  ),],
-  IntegrationUiDefinition(
-    label: "Broom Closet Ending",
-    integrationId: "broom-closet-ending",
-    type: IntegrationUiType.button,
-    evaluatorScript: '''
-      var lightState = props['/lightState'];
-      var value = lightState['on_off'] == 1;
-      return {
-        "text": value ? "Turn Off" : "Turn On",
-        "icon": value ? "lightbulb" : "lightbulb_outlined",
-        "value": value,
-      };
-    ''',
-    outputTransformer: '''
-      return {
-        "path": "/\${integrationId}/power/toggle",
-        "data": "true",
-      };
-    ''',
-  ),
-];
+String kDashboardConfig = '''[
+  [
+    {
+      "label": "Bedside Bulb",
+      "integrationId": "bed-bulb",
+      "type": "button",
+      "evaluatorScript": "      var lightState = props['/lightState'];\n      var value = lightState['on_off'] == 1;\n      return {\n        \"text\": value ? \"Turn Off\" : \"Turn On\",\n        \"icon\": value ? \"lightbulb\" : \"lightbulb_outlined\",\n        \"value\": value,\n      };\n    ",
+      "outputTransformer": "      return {\n        \"path\": \"/\${integrationId}/power/toggle\",\n        \"data\": \"true\",\n      };\n    "
+    },
+    {
+      "label": "Desk Bulb",
+      "integrationId": "desk-bulb",
+      "type": "button",
+      "evaluatorScript": "      var lightState = props['/lightState'];\n      var value = lightState['on_off'] == 1;\n      return {\n        \"text\": value ? \"Turn Off\" : \"Turn On\",\n        \"icon\": value ? \"lightbulb\" : \"lightbulb_outlined\",\n        \"value\": value,\n      };\n    ",
+      "outputTransformer": "      return {\n        \"path\": \"/\${integrationId}/power/toggle\",\n        \"data\": \"true\",\n      };\n    "
+    }
+  ],
+  [
+    {
+      "label": "Bed Temperature",
+      "integrationId": "bed-bulb",
+      "type": "slider",
+      "evaluatorScript": "      var lightState = props['/lightState'];\n      var temperatureRange = props['/temperatureRange'];\n      return {\n        \"value\": lightState['color_temp'],\n        \"min\": temperatureRange['min'],\n        \"max\": temperatureRange['max'],\n      };\n    ",
+      "outputTransformer": "      return {\n        \"path\": \"/\${integrationId}/light/temperature\",\n        \"data\": props[\"value\"].toString(),\n      };\n    "
+    },
+    {
+      "label": "Bed Brightness",
+      "integrationId": "bed-bulb",
+      "type": "slider",
+      "evaluatorScript": "      var lightState = props['/lightState'];\n      return {\n        \"value\": lightState['brightness'],\n        \"min\": 0,\n        \"max\": 100,\n      };\n    ",
+      "outputTransformer": "      return {\n        \"path\": \"/\${integrationId}/light/brightness\",\n        \"data\": props[\"value\"].toString(),\n      };\n    "
+    }
+  ],
+  [
+    {
+      "label": "Desk Temperature",
+      "integrationId": "desk-bulb",
+      "type": "slider",
+      "evaluatorScript": "      var lightState = props['/lightState'];\n      var temperatureRange = props['/temperatureRange'];\n      return {\n        \"value\": lightState['color_temp'],\n        \"min\": temperatureRange['min'],\n        \"max\": temperatureRange['max'],\n      };\n    ",
+      "outputTransformer": "      return {\n        \"path\": \"/\${integrationId}/light/temperature\",\n        \"data\": props[\"value\"].toString(),\n      };\n    "
+    },
+    {
+      "label": "Desk Brightness",
+      "integrationId": "desk-bulb",
+      "type": "slider",
+      "evaluatorScript": "      var lightState = props['/lightState'];\n      return {\n        \"value\": lightState['brightness'],\n        \"min\": 0,\n        \"max\": 100,\n      };\n    ",
+      "outputTransformer": "      return {\n        \"path\": \"/\${integrationId}/light/brightness\",\n        \"data\": props[\"value\"].toString(),\n      };\n    "
+    }
+  ],
+  {
+    "label": "Closet Lights",
+    "integrationId": "broom-closet-ending",
+    "type": "button",
+    "evaluatorScript": "      var lightState = props['/lightState'];\n      var value = lightState['on_off'] == 1;\n      return {\n        \"text\": value ? \"Turn Off\" : \"Turn On\",\n        \"icon\": value ? \"lightbulb\" : \"lightbulb_outlined\",\n        \"value\": value,\n      };\n    ",
+    "outputTransformer": "      return {\n        \"path\": \"/\${integrationId}/power/toggle\",\n        \"data\": \"true\",\n      };\n    "
+  },
+  {
+    "label": "Poweroff",
+    "integrationId": "poweroffer",
+    "type": "statelessButton",
+    "evaluatorScript": "     return {\n        \"text\": \"Shutdown\",\n        \"icon\": \"power_settings_new_rounded\",\n      };\n    ",
+    "outputTransformer": "      return {\n        \"path\": \"/\${integrationId}/poweroff\",\n        \"data\": \"true\",\n      };\n    "
+  }
+]''';
