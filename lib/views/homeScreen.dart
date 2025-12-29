@@ -19,22 +19,7 @@ class Homescreen extends StatelessWidget {
     ColorScheme colors = Theme.of(context).colorScheme;
 
     return Center(
-      child: Obx(() => !controller.connected.value ? Column(
-        mainAxisSize: MainAxisSize.min,
-        // crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text("Not connected to Orchestrator",style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: colors.onErrorContainer)),
-          SizedBox(height: 16),
-          OutlinedButton.icon(
-            onPressed: () {
-              controller.reconnect();
-            },
-            icon: Icon(Icons.refresh_rounded),
-            label: Text("Reconnect"),
-          )
-        ],
-      )
-        : Obx(() => ListView(
+      child: Obx(() => ListView(
           children: preferences.dashboardConfiguration.map((e) => UiDefinitionToWidget(e)).toList(),
           // children: [
           //   GenericIntegrationComponent(
@@ -47,7 +32,7 @@ class Homescreen extends StatelessWidget {
           //   )
           // ]
         )
-      )),
+      ),
     );
   }
 }

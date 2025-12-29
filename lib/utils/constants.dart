@@ -1,6 +1,6 @@
 import '../views/components/generics.dart';
 
-String kVersionString = "0.0.7.6";
+String kVersionString = "0.0.7.7";
 String kDashboardConfig = '''[
   [
     {

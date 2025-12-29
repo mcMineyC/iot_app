@@ -102,12 +102,25 @@ class ScaffoldWidget extends StatelessWidget {
             children: [
               Text("Not connected to Orchestrator",style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: colors.onErrorContainer)),
               SizedBox(height: 16),
-              controller.connectionState == "errorFinal" ? OutlinedButton.icon(
-                onPressed: () {
-                  controller.reconnect();
-                },
-                icon: Icon(Icons.refresh_rounded),
-                label: Text("Reconnect"),
+              controller.connectionState == "errorFinal" ? Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  FilledButton.tonalIcon(
+                    onPressed: () {
+                      Get.offNamed("/searching");
+                    },
+                    label: Text("Discover"),
+                    icon: Icon(Icons.search_rounded),
+                  ),
+                  SizedBox(width: 16),
+                  OutlinedButton.icon(
+                    onPressed: () {
+                      controller.reconnect();
+                    },
+                    label: Text("Retry"),
+                    icon: Icon(Icons.refresh_rounded),
+                  ),
+                ]
               ) : SizedBox.shrink(),
             ],
           ),

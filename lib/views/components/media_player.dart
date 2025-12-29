@@ -59,7 +59,7 @@ class _IntegrationMediaPlayerState extends State<IntegrationMediaPlayer> {
             }
           }
 
-          if(md != null && md["imageUrl"] != null && md["imageUrl"] != metadata.imageUrl) {
+          if(md != null && md["imageUrl"] != null && (md["imageUrl"] != metadata.imageUrl || imageColors.primary == Colors.lightBlue)) {
             getAccentColor(md["imageUrl"]);
           }
 
