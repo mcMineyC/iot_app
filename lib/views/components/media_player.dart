@@ -48,7 +48,7 @@ class _IntegrationMediaPlayerState extends State<IntegrationMediaPlayer> {
         (_) => setState(() {
           enabled = true;
           var md = orchestrator.orchestratorState[widget.integrationId]!["/metadata"];
-          bool playing = orchestrator.orchestratorState[widget.integrationId]!["/playbackState"] == "Playing";
+          bool playing = orchestrator.orchestratorState[widget.integrationId]!["/playbackState"]["playing"] == "Playing";
           int pos = orchestrator.orchestratorState[widget.integrationId]!["/position"];
           Duration length = Duration.zero;
           if(md != null && md["length"] != null) {
@@ -157,7 +157,7 @@ class _IntegrationMediaPlayerState extends State<IntegrationMediaPlayer> {
       Widget player = ConstrainedBox(
         constraints: BoxConstraints(maxWidth: 400),
         child: AspectRatio(
-          aspectRatio: 16 / 10,
+          aspectRatio: 16 / 9,
           child: GenericIntegrationComponent(
             online: online,
             padding: EdgeInsets.all(0),
@@ -220,27 +220,34 @@ class _IntegrationMediaPlayerState extends State<IntegrationMediaPlayer> {
                           child: Row( // Text + play
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Column( // Text
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    metadata.title,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(0, 0, 12, 0),
+                                  child: Column( // Text
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        metadata.title,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                      ),
+                                      Text(
+                                        metadata.artist,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    metadata.artist,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
+                                ),
                               ),
                               IconButton.filled(
                                 constraints: BoxConstraints(
@@ -288,7 +295,7 @@ class _IntegrationMediaPlayerState extends State<IntegrationMediaPlayer> {
                                   ),
                                   child: SquigglySlider(
                                     useLineThumb: playing,
-                                    value: localPosition >= 0 ? localPosition.toDouble() : (position.inMilliseconds.toDouble() > metadata.length.inMilliseconds.toDouble() ? 0 : position.inMilliseconds.toDouble()),
+                                    value: localPosition >= 0 ? localPosition.toDouble() : (position.inMilliseconds.toDouble() > metadata.length.inMilliseconds.toDouble() ? 0 : (position.inMilliseconds < 0) ? 0 : position.inMilliseconds.toDouble()),
                                     min: 0,
                                     max: metadata.length.inMilliseconds.toDouble(),
                                     squiggleAmplitude: playing ? 4 : 0,

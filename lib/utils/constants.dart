@@ -1,8 +1,15 @@
 import '../views/components/generics.dart';
 
-String kVersionString = "0.0.6.7";
+String kVersionString = "0.0.7.6";
 String kDashboardConfig = '''[
   [
+    {
+      "label": "Spotify",
+      "integrationId": "spotify",
+      "type": "mediaPlayer",
+      "evaluatorScript": "",
+      "outputTransformer": ""
+    },
     {
       "label": "Bedside Bulb",
       "integrationId": "bed-bulb",
